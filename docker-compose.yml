@@ -1,0 +1,27 @@
+services:
+  db:
+    container_name: project-db
+    image: postgres
+    hostname: localhost
+    ports:
+      - "2345:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: planit
+    volumes:
+      - planit-db:/var/lib/postgresql/data
+    restart: unless-stopped
+  pgadmin:
+    container_name: project-pgadmin
+    image: dpage/pgadmin4
+    depends_on:
+      - db
+    ports:
+      - "4040:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    restart: unless-stopped
+volumes:
+  planit-db:
