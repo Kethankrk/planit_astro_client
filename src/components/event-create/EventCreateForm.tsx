@@ -1,15 +1,15 @@
 import * as z from "zod";
 
-export const eventSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  description: z.string().min(1, "Description is required"),
+const eventSchema = z.object({
+  title: z.string().min(4, "Title is required"),
+  description: z.string().min(5, "Description is required"),
   startDateTime: z.date({
     required_error: "Start date and time is required",
   }),
   endDateTime: z.date({
     required_error: "End date and time is required",
   }),
-  location: z.string().min(1, "Location is required"),
+  location: z.string().min(5, "Location is required"),
   requirements: z.string().optional(),
   bannerImage: z.instanceof(File, {
     message: "Banner image is required",
@@ -23,7 +23,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarIcon, UploadIcon } from "lucide-react";
 import { format } from "date-fns";
 
-import { cn } from "@/lib/utils";
+import { cn, postHelper } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -50,8 +50,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
 
 export function EventCreateForm() {
+  const { toast } = useToast();
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventSchema),
     defaultValues: {
@@ -62,9 +64,39 @@ export function EventCreateForm() {
     },
   });
 
-  function onSubmit(data: EventFormValues) {
-    console.log(data);
-    // Here you would typically send the data to your backend
+  async function onSubmit(data: EventFormValues) {
+    try {
+      const formData = new FormData();
+      formData.append("title", data.title);
+      formData.append("description", data.description);
+      formData.append("startAt", data.startDateTime.toISOString());
+      formData.append("endingAt", data.endDateTime.toISOString());
+      formData.append("location", data.location);
+      formData.append("requirements", data.requirements ?? "");
+      formData.append("banner", data.bannerImage);
+      const response = await postHelper("/api/event/create", formData, true);
+      if (response.ok) {
+        window.location.href = "/";
+      } else if (response.status == 400) {
+        toast({
+          title: "Event creation failed",
+          description: "Please fill in all required fields",
+          variant: "destructive",
+        });
+      } else if (response.status == 500) {
+        toast({
+          title: "Unkown server error",
+          description: "Please try again later",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Something went wrong",
+        description: "Please try again later",
+        variant: "destructive",
+      });
+    }
   }
 
   const generateTimeOptions = () => {
