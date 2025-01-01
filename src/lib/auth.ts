@@ -1,4 +1,4 @@
-import { adapter } from "@/db/schema";
+import { adapter } from "@/db";
 import { Lucia } from "lucia";
 
 export const lucia = new Lucia(adapter, {
