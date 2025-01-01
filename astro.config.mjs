@@ -17,4 +17,7 @@ export default defineConfig({
       applyBaseStyles: false,
     }),
   ],
+  experimental: {
+    svg: true,
+  },
 });
