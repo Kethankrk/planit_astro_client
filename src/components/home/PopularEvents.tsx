@@ -12,7 +12,7 @@ import TechEventCard from "./EventCardVertical";
 
 export default function PopularEvents() {
   return (
-    <Carousel className="w-full max-w-[90%]">
+    <Carousel className="w-full">
       <CarouselContent className="-ml-1">
         {Array.from({ length: 5 }).map((_, index) => (
           <CarouselItem key={index} className="pl-1 md:basis-1/2 lg:basis-1/4">

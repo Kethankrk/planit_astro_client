@@ -1,6 +1,6 @@
 ---
 const { title } = Astro.props;
-import { ModeToggle } from "@/components/ModeToggle";
+import { NavMenu } from "@/components/nav/nav-menu";
 import { Toaster } from "@/components/ui/toaster";
 import "@/styles/globals.css";
 ---
@@ -35,10 +35,8 @@ import "@/styles/globals.css";
     <title>{title}</title>
   </head>
   <body class="min-h-screen flex flex-col">
-    <nav class="px-10 py-4 flex justify-end shadow-xl">
-      <ModeToggle client:load />
-    </nav>
-    <div class="px-10">
+    <NavMenu client:load />
+    <div class="mt-14 max-w-[1400px] mx-auto">
       <slot />
     </div>
     <Toaster client:load />
