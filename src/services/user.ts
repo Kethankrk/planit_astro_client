@@ -3,7 +3,7 @@ import {
   userTable,
   type UserInsertType,
   type UserSelectType,
-} from "@/db/schema";
+} from "@/db/schema/auth";
 import { eq } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 

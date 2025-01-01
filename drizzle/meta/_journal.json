@@ -15,6 +15,13 @@
       "when": 1735731071457,
       "tag": "0001_acoustic_garia",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1735733554640,
+      "tag": "0002_productive_vargas",
+      "breakpoints": true
     }
   ]
 }

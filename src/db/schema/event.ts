@@ -10,7 +10,7 @@ export const eventTable = pgTable("event", {
   endingAt: timestamp("ending_at").notNull(),
   banner: text("banner").notNull(),
   location: text("location").notNull(),
-  requirements: text("requirements").array().default([]),
+  requirements: text("requirements"),
   userId: text("user_id")
     .notNull()
     .references(() => userTable.id),
