@@ -1,6 +1,13 @@
-import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import {
+  decimal,
+  integer,
+  pgTable,
+  serial,
+  text,
+  timestamp,
+} from "drizzle-orm/pg-core";
 import { userTable } from "./auth";
-import type { InferInsertModel } from "drizzle-orm";
+import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 
 export const eventTable = pgTable("event", {
   id: serial("id").primaryKey(),
@@ -16,5 +23,19 @@ export const eventTable = pgTable("event", {
     .references(() => userTable.id),
 });
 
+export const ticketTable = pgTable("ticket", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  price: decimal("price"),
+  limit: integer("limit"),
+  perks: text("perks"),
+  eventId: integer("event_id")
+    .notNull()
+    .references(() => eventTable.id),
+});
+
 export type EventInsertType = InferInsertModel<typeof eventTable>;
-export type EventSelectType = InferInsertModel<typeof eventTable>;
+export type EventSelectType = InferSelectModel<typeof eventTable>;
+
+export type TicketInsertType = InferInsertModel<typeof ticketTable>;
+export type TicketSelectType = InferSelectModel<typeof ticketTable>;
