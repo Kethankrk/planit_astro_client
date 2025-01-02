@@ -13,3 +13,7 @@ export class CustomError extends Error {
     return this.code;
   }
 }
+
+export function serverError(): Response {
+  return Response.json({ error: "Server error" }, { status: 500 });
+}

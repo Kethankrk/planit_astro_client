@@ -23,15 +23,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { TicketSchema } from "@/lib/form-schema";
+import { postHelper } from "@/lib/utils";
 
-const TicketSchema = z.object({
-  title: z.string().min(1),
-  price: z.number().optional(),
-  limit: z.number().optional(),
-  perks: z.string().optional(),
-});
+interface props {
+  eventId: string;
+}
 
-export function CreateTicketOption() {
+export function CreateTicketOption({ eventId }: props) {
   const { toast } = useToast();
   const form = useForm<z.infer<typeof TicketSchema>>({
     resolver: zodResolver(TicketSchema),
@@ -43,15 +42,34 @@ export function CreateTicketOption() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof TicketSchema>) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-        </pre>
-      ),
-    });
+  async function onSubmit(data: z.infer<typeof TicketSchema>) {
+    try {
+      const response = await postHelper(
+        `/api/ticket?event_id=${eventId}`,
+        data
+      );
+      if (response.status == 201) {
+        window.location.reload();
+      } else if (response.status == 400) {
+        toast({
+          title: "Bad request",
+          description: "Invalid data provided",
+          variant: "destructive",
+        });
+      } else if (response.status == 500) {
+        toast({
+          title: "Unkown server error",
+          description: "Something went wrong in our side",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Something went wrong",
+        description: "Please try again later",
+        variant: "destructive",
+      });
+    }
   }
   return (
     <AlertDialog>
