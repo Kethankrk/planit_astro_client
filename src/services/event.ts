@@ -1,10 +1,16 @@
 import { db } from "@/db";
-import { eventTable, type EventInsertType } from "@/db/schema/event";
+import {
+  eventTable,
+  type EventInsertType,
+  type EventSelectType,
+} from "@/db/schema/event";
 import { CustomError } from "@/lib/api";
+import { eq } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 interface IEventService {
   create(data: EventInsertType): Promise<number>;
+  get(id: number): Promise<EventSelectType>;
 }
 
 export class EventService implements IEventService {
@@ -33,5 +39,17 @@ export class EventService implements IEventService {
     }
 
     return event.id;
+  }
+
+  async get(id: number): Promise<EventSelectType> {
+    const [event] = await this.db
+      .select()
+      .from(eventTable)
+      .where(eq(eventTable.id, id));
+
+    if (!event) {
+      throw new CustomError("Event not found", 404);
+    }
+    return event;
   }
 }
