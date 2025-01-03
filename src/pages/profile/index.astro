@@ -1,0 +1,10 @@
+---
+import ProfileSection from "@/components/profile/ProfileSection";
+import MainLayout from "@/layout/MainLayout.astro";
+
+const { user } = Astro.locals;
+---
+
+<MainLayout>
+  <ProfileSection client:load userData={user!} />
+</MainLayout>
