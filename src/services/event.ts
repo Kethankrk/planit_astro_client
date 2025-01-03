@@ -1,16 +1,22 @@
 import { db } from "@/db";
 import {
   eventTable,
+  ticketResponseTable,
+  ticketTable,
   type EventInsertType,
   type EventSelectType,
+  type TicketResponseInsertType,
+  type TicketResponseSelectType,
 } from "@/db/schema/event";
 import { CustomError } from "@/lib/api";
-import { eq } from "drizzle-orm";
+import { eq, getTableColumns } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 interface IEventService {
   create(data: EventInsertType): Promise<number>;
   get(id: number): Promise<EventSelectType>;
+  createResponse(responseData: TicketResponseInsertType): Promise<number>;
+  getAllResponse(eventId: number): Promise<TicketResponseSelectType[]>;
 }
 
 export class EventService implements IEventService {
@@ -51,5 +57,29 @@ export class EventService implements IEventService {
       throw new CustomError("Event not found", 404);
     }
     return event;
+  }
+
+  async createResponse(
+    responseData: TicketResponseInsertType
+  ): Promise<number> {
+    const [response] = await this.db
+      .insert(ticketResponseTable)
+      .values(responseData)
+      .returning({ id: ticketResponseTable.id });
+
+    return response.id;
+  }
+
+  async getAllResponse(eventId: number): Promise<TicketResponseSelectType[]> {
+    const responses = await this.db
+      .select({
+        ...getTableColumns(ticketResponseTable),
+      })
+      .from(ticketResponseTable)
+      .leftJoin(ticketTable, eq(ticketTable.id, ticketResponseTable.ticketId))
+      .leftJoin(eventTable, eq(ticketTable.eventId, eventTable.id))
+      .where(eq(eventTable.id, eventId));
+
+    return responses;
   }
 }

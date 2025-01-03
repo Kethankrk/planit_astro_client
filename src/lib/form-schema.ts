@@ -12,4 +12,5 @@ export const TicketResponseSchema = z.object({
   email: z.string().email(),
   phone: z.string().length(10),
   address: z.string().min(5),
+  ticketId: z.number(),
 });

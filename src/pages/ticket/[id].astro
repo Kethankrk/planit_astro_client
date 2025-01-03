@@ -20,6 +20,6 @@ if (!ticket) {
       limit={ticket.limit}
       perks={ticket.perks}
     />
-    <TicketBuyForm client:load user={Astro.locals.user} />
+    <TicketBuyForm client:load user={Astro.locals.user} ticketId={Number(id)} />
   </div>
 </MainLayout>

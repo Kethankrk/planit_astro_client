@@ -36,6 +36,13 @@
       "when": 1735899827897,
       "tag": "0004_uneven_surge",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1735902158823,
+      "tag": "0005_bright_kronos",
+      "breakpoints": true
     }
   ]
 }

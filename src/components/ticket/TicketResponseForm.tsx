@@ -17,30 +17,47 @@ import { TicketResponseSchema } from "@/lib/form-schema";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "../ui/card";
 import type { User } from "lucia";
+import {
+  postHelper,
+  toastBadRequest,
+  toastServerError,
+  toastUnknownError,
+} from "@/lib/utils";
 
 interface Props {
   user: User | null;
+  ticketId: number;
 }
 
-export function TicketBuyForm({ user }: Props) {
+export function TicketBuyForm({ user, ticketId }: Props) {
   const { toast } = useToast();
   const form = useForm<z.infer<typeof TicketResponseSchema>>({
     resolver: zodResolver(TicketResponseSchema),
     defaultValues: {
       name: user?.username,
       email: user?.email,
+      ticketId: ticketId,
     },
   });
 
-  function onSubmit(data: z.infer<typeof TicketResponseSchema>) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+  async function onSubmit(data: z.infer<typeof TicketResponseSchema>) {
+    try {
+      const response = await postHelper("/api/ticket/buy", data);
+      if (response.ok) {
+        toast({
+          title: "Ticket purchased successfully",
+          description: "You can now download your ticket from ticket section",
+        });
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        window.location.href = "/";
+      } else if (response.status == 400) {
+        toast(toastBadRequest);
+      } else if (response.status == 500) {
+        toast(toastServerError);
+      }
+    } catch (error) {
+      toast(toastUnknownError);
+    }
   }
 
   return (
