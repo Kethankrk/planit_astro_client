@@ -1,0 +1,13 @@
+---
+import MainLayout from "@/layout/MainLayout.astro";
+import { TicketBuyForm } from "@/components/ticket/TicketResponseForm";
+import { TicketInfo } from "@/components/ticket/TicketInfo";
+const { id } = Astro.params;
+---
+
+<MainLayout>
+  <div class="max-w-4xl mx-auto">
+    <TicketInfo price="300" limit={20} perks="nothing" />
+    <TicketBuyForm client:load />
+  </div>
+</MainLayout>

@@ -34,8 +34,26 @@ export const ticketTable = pgTable("ticket", {
     .references(() => eventTable.id),
 });
 
+export const ticketResponseTable = pgTable("ticket-response", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone").notNull(),
+  address: text("address").notNull(),
+  ticketId: integer("ticket_id")
+    .notNull()
+    .references(() => ticketTable.id),
+});
+
 export type EventInsertType = InferInsertModel<typeof eventTable>;
 export type EventSelectType = InferSelectModel<typeof eventTable>;
 
 export type TicketInsertType = InferInsertModel<typeof ticketTable>;
 export type TicketSelectType = InferSelectModel<typeof ticketTable>;
+
+export type TicketResponseInsertType = InferInsertModel<
+  typeof ticketResponseTable
+>;
+export type TicketResponseSelectType = InferSelectModel<
+  typeof ticketResponseTable
+>;

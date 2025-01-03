@@ -6,3 +6,10 @@ export const TicketSchema = z.object({
   limit: z.number().optional(),
   perks: z.string().optional(),
 });
+
+export const TicketResponseSchema = z.object({
+  name: z.string().min(2),
+  email: z.string().email(),
+  phone: z.string().length(10),
+  address: z.string().min(5),
+});
