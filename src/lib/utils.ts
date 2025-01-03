@@ -16,3 +16,15 @@ export function postHelper(url: string, data: any, isFormData = false) {
     body: isFormData ? data : JSON.stringify(data),
   });
 }
+
+export function patchHelper(url: string, data: any, isFormData = false) {
+  return fetch(url, {
+    method: "PATCH",
+    headers: isFormData
+      ? undefined
+      : {
+          "Content-Type": "application/json",
+        },
+    body: isFormData ? data : JSON.stringify(data),
+  });
+}

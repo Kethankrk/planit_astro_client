@@ -24,31 +24,46 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { TicketSchema } from "@/lib/form-schema";
-import { postHelper } from "@/lib/utils";
+import { patchHelper, postHelper } from "@/lib/utils";
+import type { TicketSelectType } from "@/db/schema/event";
 
 interface props {
   eventId: string;
+  buttonText: string;
+  ticketData?: TicketSelectType;
+  editMode?: boolean;
 }
 
-export function CreateTicketOption({ eventId }: props) {
+export function CreateTicketOption({
+  eventId,
+  buttonText,
+  ticketData,
+  editMode = false,
+}: props) {
   const { toast } = useToast();
   const form = useForm<z.infer<typeof TicketSchema>>({
     resolver: zodResolver(TicketSchema),
     defaultValues: {
-      title: "",
-      price: undefined,
-      limit: undefined,
-      perks: "",
+      title: ticketData?.title,
+      price: editMode ? Number(ticketData!.price) : undefined,
+      limit: editMode ? Number(ticketData!.limit) : undefined,
+      perks: ticketData?.perks ?? "",
     },
   });
 
-  async function onSubmit(data: z.infer<typeof TicketSchema>) {
+  async function createOrUpdateTicket(
+    data: z.infer<typeof TicketSchema>
+  ): Promise<Response> {
+    if (editMode) {
+      return await patchHelper(`/api/ticket?ticket_id=${ticketData!.id}`, data);
+    }
+    return await postHelper(`/api/ticket?event_id=${eventId}`, data);
+  }
+
+  async function onSubmit(data: z.infer<typeof TicketSchema>): Promise<void> {
     try {
-      const response = await postHelper(
-        `/api/ticket?event_id=${eventId}`,
-        data
-      );
-      if (response.status == 201) {
+      const response = await createOrUpdateTicket(data);
+      if (response.ok) {
         window.location.reload();
       } else if (response.status == 400) {
         toast({
@@ -74,7 +89,7 @@ export function CreateTicketOption({ eventId }: props) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="outline">Create Ticket</Button>
+        <Button variant="outline">{buttonText}</Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -180,7 +195,7 @@ export function CreateTicketOption({ eventId }: props) {
                     Cancel
                   </AlertDialogCancel>
                   <Button type="submit" className="w-full">
-                    Create Ticket
+                    {editMode ? "Update Ticket" : "Create Ticket"}
                   </Button>
                 </div>
               </form>

@@ -6,30 +6,40 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { CreateTicketOption } from "./CreateTicket";
+import type { TicketSelectType } from "@/db/schema/event";
 
 interface TicketCardProps {
-  title: string;
-  price: string | null;
-  limit: number | null;
-  navLink: string;
+  ticket: TicketSelectType;
+  editable?: boolean;
 }
 
-export function TicketCard({ title, price, navLink, limit }: TicketCardProps) {
+export function TicketCard({ ticket, editable = false }: TicketCardProps) {
   return (
     <Card className="w-full hover:translate-y-[-5px] transition-all">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-xl">{title}</CardTitle>
+        <CardTitle className="text-xl">{ticket.title}</CardTitle>
         <p className="text-sm font-medium">
-          {limit ? `${limit} left` : "Unlimited"}
+          {ticket.limit ? `${ticket.limit} left` : "Unlimited"}
         </p>
       </CardHeader>
       <CardContent>
-        <p className="text-3xl font-bold">{price ? `$${price}` : "FREE"}</p>
+        <p className="text-3xl font-bold">
+          {ticket.price ? `$${ticket.price}` : "FREE"}
+        </p>
       </CardContent>
-      <CardFooter>
-        <a href={navLink}>
+      <CardFooter className="gap-5">
+        <a href={`/ticket/${ticket.id}`}>
           <Button className="w-full">Book Now</Button>
         </a>
+        {editable && (
+          <CreateTicketOption
+            buttonText="Edit"
+            eventId="1"
+            editMode
+            ticketData={ticket}
+          />
+        )}
       </CardFooter>
     </Card>
   );

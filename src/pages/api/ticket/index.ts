@@ -40,3 +40,40 @@ export async function POST(context: APIContext): Promise<Response> {
     return serverError();
   }
 }
+
+export async function PATCH(context: APIContext): Promise<Response> {
+  try {
+    const { searchParams } = new URL(context.request.url);
+    const ticketId = searchParams.get("ticket_id");
+
+    if (!ticketId) {
+      throw new CustomError("ticket_id missing in query params");
+    }
+    const inputData = await context.request.json();
+
+    const validatedResult = TicketSchema.safeParse(inputData);
+
+    if (!validatedResult.success) {
+      throw new CustomError(validatedResult.error.message);
+    }
+
+    await TicketService.getInstance().update(Number(ticketId), {
+      ...validatedResult.data,
+      price: validatedResult.data.price?.toString(),
+    });
+
+    return Response.json(
+      { message: "Ticket updated successfully" },
+      { status: 200 }
+    );
+  } catch (error: unknown) {
+    console.log(error);
+    if (error instanceof CustomError) {
+      return Response.json(
+        { error: error.message },
+        { status: error.statusCode }
+      );
+    }
+    return serverError();
+  }
+}

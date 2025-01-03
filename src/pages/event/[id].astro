@@ -12,8 +12,14 @@ import type { EventSelectType } from "@/db/schema/event";
 const { id } = Astro.params;
 let eventData: EventSelectType;
 let tickets = [];
+let isOwner = false;
 try {
   eventData = await EventService.getInstance().get(Number(id));
+
+  if(eventData.userId == Astro.locals.user!.id){
+    isOwner = true;
+  }
+
   tickets = await TicketService.getInstance().getAll(Number(id));
 } catch (error) {
   if (error instanceof CustomError && error.statusCode === 404) {
@@ -66,7 +72,9 @@ try {
     }
     <div class="flex justify-between items-center mt-20">
       <h2 class="text-2xl font-bold">Tickets</h2>
-      <CreateTicketOption client:load eventId={id!} />
+      {isOwner &&
+        <CreateTicketOption client:load eventId={id!} buttonText="Create Ticket" />
+      }
     </div>
     {
       !tickets.length && (
@@ -77,10 +85,9 @@ try {
       {
         tickets.map((ticket) => (
           <TicketCard
-            title={ticket.title}
-            price={ticket.price}
-            limit={ticket.limit}
-            navLink={`/ticket/${ticket.id}`}
+            ticket={ticket}
+            editable={isOwner}
+            client:load
           />
         ))
       }

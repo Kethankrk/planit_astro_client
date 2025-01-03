@@ -8,10 +8,16 @@ import { CustomError } from "@/lib/api";
 import { eq } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
+type EventUpdateType = Pick<
+  TicketInsertType,
+  "title" | "price" | "limit" | "perks"
+>;
+
 interface ITicketService {
   create(ticketData: TicketInsertType): Promise<number>;
   get(id: number): Promise<TicketSelectType | null>;
   getAll(eventId: number): Promise<TicketSelectType[]>;
+  update(id: number, ticketData: EventUpdateType): Promise<void>;
 }
 
 export class TicketService implements ITicketService {
@@ -55,5 +61,12 @@ export class TicketService implements ITicketService {
       .where(eq(ticketTable.eventId, eventId));
 
     return tickets;
+  }
+
+  async update(id: number, ticketData: EventUpdateType): Promise<void> {
+    await this.db
+      .update(ticketTable)
+      .set(ticketData)
+      .where(eq(ticketTable.id, id));
   }
 }
