@@ -2,12 +2,24 @@
 import MainLayout from "@/layout/MainLayout.astro";
 import { TicketBuyForm } from "@/components/ticket/TicketResponseForm";
 import { TicketInfo } from "@/components/ticket/TicketInfo";
+import { TicketService } from "@/services/ticket";
 const { id } = Astro.params;
+
+const ticket = await TicketService.getInstance().get(Number(id));
+
+if (!ticket) {
+  return Astro.redirect("/404");
+}
 ---
 
 <MainLayout>
   <div class="max-w-4xl mx-auto">
-    <TicketInfo price="300" limit={20} perks="nothing" />
-    <TicketBuyForm client:load />
+    <TicketInfo
+      title={ticket.title}
+      price={ticket.price}
+      limit={ticket.limit}
+      perks={ticket.perks}
+    />
+    <TicketBuyForm client:load user={Astro.locals.user} />
   </div>
 </MainLayout>

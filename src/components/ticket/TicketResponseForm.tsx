@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -17,11 +16,20 @@ import { useToast } from "@/hooks/use-toast";
 import { TicketResponseSchema } from "@/lib/form-schema";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "../ui/card";
+import type { User } from "lucia";
 
-export function TicketBuyForm() {
+interface Props {
+  user: User | null;
+}
+
+export function TicketBuyForm({ user }: Props) {
   const { toast } = useToast();
   const form = useForm<z.infer<typeof TicketResponseSchema>>({
     resolver: zodResolver(TicketResponseSchema),
+    defaultValues: {
+      name: user?.username,
+      email: user?.email,
+    },
   });
 
   function onSubmit(data: z.infer<typeof TicketResponseSchema>) {
@@ -99,7 +107,7 @@ export function TicketBuyForm() {
             )}
           />
           <Button type="submit" className="w-full">
-            Submit
+            BUY
           </Button>
         </form>
       </Form>
