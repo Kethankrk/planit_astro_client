@@ -1,7 +1,9 @@
 ---
 import SearchBar from "@/components/home/SerachBar";
 import PopularEvents from "@/components/home/PopularEvents";
+import UpcomingEvents from "@/components/home/UpcomingEvents";
 import MainLayout from "@/layout/MainLayout.astro";
+import { CalendarDays, Sparkles } from "lucide-react";
 
 const user = Astro.locals.user;
 
@@ -11,12 +13,55 @@ if (!user) {
 ---
 
 <MainLayout>
-  <div class="py-10">
-    <SearchBar client:load />
-  </div>
-  <h1 class="text-4xl font-semibold mb-10">Discover Events</h1>
-  <p class="font-medium mb-5">Popular events</p>
-  <div class="mx-10">
-    <PopularEvents client:load />
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="relative py-20">
+      <div class="absolute inset-0">
+        <div
+          class="bg-gradient-to-br from-primary/5 to-secondary/5 h-full w-full"
+        >
+        </div>
+      </div>
+      <div class="relative">
+        <h1 class="text-5xl font-bold text-center mb-4">
+          Discover Amazing Events
+        </h1>
+        <p class="text-muted-foreground text-center mb-8">
+          Find and join the most exciting tech events near you
+        </p>
+        <div class="max-w-2xl mx-auto">
+          <SearchBar client:load />
+        </div>
+      </div>
+    </div>
+
+    <div class="py-12 space-y-16">
+      <section>
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h2 class="text-3xl font-bold mb-2">Popular Events</h2>
+            <p class="text-muted-foreground">Trending in the tech community</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-muted-foreground" />
+            <span class="text-sm text-muted-foreground">Featured events</span>
+          </div>
+        </div>
+        <PopularEvents client:load />
+      </section>
+
+      <section>
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h2 class="text-3xl font-bold mb-2">Upcoming Events</h2>
+            <p class="text-muted-foreground">Don't miss out on these events</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <CalendarDays className="w-5 h-5 text-muted-foreground" />
+            <span class="text-sm text-muted-foreground">Next 30 days</span>
+          </div>
+        </div>
+        <UpcomingEvents client:load />
+      </section>
+    </div>
   </div>
 </MainLayout>
