@@ -15,7 +15,6 @@ export async function POST(context: APIContext): Promise<Response> {
 
     await EventService.getInstance().createResponse({
       ...validatedResult.data,
-      userId: context.locals.user!.id,
     });
 
     return Response.json(

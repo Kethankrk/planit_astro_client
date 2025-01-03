@@ -8,10 +8,11 @@ import { Image } from "astro:assets";
 import { EventService } from "@/services/event";
 import { TicketService } from "@/services/ticket";
 import { CustomError } from "@/lib/api";
-import type { EventSelectType } from "@/db/schema/event";
+import type { EventSelectType, TicketSelectType } from "@/db/schema/event";
 const { id } = Astro.params;
 let eventData: EventSelectType;
 let tickets = [];
+let purchasedTicketIds: number[] = []
 let isOwner = false;
 try {
   eventData = await EventService.getInstance().get(Number(id));
@@ -21,6 +22,8 @@ try {
   }
 
   tickets = await TicketService.getInstance().getAll(Number(id));
+  const purchasedTickets = await TicketService.getInstance().ticketsFromOneEvent(Number(id), Astro.locals.user!.email)
+  purchasedTicketIds = purchasedTickets.map(ticket => ticket.id)
 } catch (error) {
   if (error instanceof CustomError && error.statusCode === 404) {
     return Astro.redirect("/404");
@@ -87,6 +90,7 @@ try {
           <TicketCard
             ticket={ticket}
             editable={isOwner}
+            purchased={purchasedTicketIds.includes(ticket.id)}
             client:load
           />
         ))

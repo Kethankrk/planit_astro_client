@@ -12,9 +12,14 @@ import type { TicketSelectType } from "@/db/schema/event";
 interface TicketCardProps {
   ticket: TicketSelectType;
   editable?: boolean;
+  purchased?: boolean;
 }
 
-export function TicketCard({ ticket, editable = false }: TicketCardProps) {
+export function TicketCard({
+  ticket,
+  editable = false,
+  purchased,
+}: TicketCardProps) {
   return (
     <Card className="w-full hover:translate-y-[-5px] transition-all">
       <CardHeader className="flex flex-row items-center justify-between">
@@ -26,6 +31,9 @@ export function TicketCard({ ticket, editable = false }: TicketCardProps) {
       <CardContent>
         <p className="text-3xl font-bold">
           {ticket.price ? `$${ticket.price}` : "FREE"}
+          {purchased && (
+            <span className="text-sm text-green-500 ml-4">PURCHASED</span>
+          )}
         </p>
       </CardContent>
       <CardFooter className="gap-5">

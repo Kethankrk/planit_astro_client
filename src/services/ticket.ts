@@ -1,11 +1,12 @@
 import { db } from "@/db";
 import {
+  ticketResponseTable,
   ticketTable,
   type TicketInsertType,
   type TicketSelectType,
 } from "@/db/schema/event";
 import { CustomError } from "@/lib/api";
-import { eq } from "drizzle-orm";
+import { and, eq, getTableColumns } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 type EventUpdateType = Pick<
@@ -18,6 +19,10 @@ interface ITicketService {
   get(id: number): Promise<TicketSelectType | null>;
   getAll(eventId: number): Promise<TicketSelectType[]>;
   update(id: number, ticketData: EventUpdateType): Promise<void>;
+  ticketsFromOneEvent(
+    eventId: number,
+    email: string
+  ): Promise<TicketSelectType[]>;
 }
 
 export class TicketService implements ITicketService {
@@ -68,5 +73,24 @@ export class TicketService implements ITicketService {
       .update(ticketTable)
       .set(ticketData)
       .where(eq(ticketTable.id, id));
+  }
+
+  async ticketsFromOneEvent(
+    eventId: number,
+    email: string
+  ): Promise<TicketSelectType[]> {
+    return await this.db
+      .select({ ...getTableColumns(ticketTable) })
+      .from(ticketTable)
+      .leftJoin(
+        ticketResponseTable,
+        eq(ticketResponseTable.ticketId, ticketTable.id)
+      )
+      .where(
+        and(
+          eq(ticketTable.eventId, eventId),
+          eq(ticketResponseTable.email, email)
+        )
+      );
   }
 }

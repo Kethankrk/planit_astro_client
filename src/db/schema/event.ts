@@ -43,9 +43,6 @@ export const ticketResponseTable = pgTable("ticket-response", {
   ticketId: integer("ticket_id")
     .notNull()
     .references(() => ticketTable.id),
-  userId: text("user_id")
-    .notNull()
-    .references(() => userTable.id),
 });
 
 export type EventInsertType = InferInsertModel<typeof eventTable>;
