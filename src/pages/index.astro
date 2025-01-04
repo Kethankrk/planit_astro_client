@@ -4,12 +4,20 @@ import PopularEvents from "@/components/home/PopularEvents";
 import UpcomingEvents from "@/components/home/UpcomingEvents";
 import MainLayout from "@/layout/MainLayout.astro";
 import { CalendarDays, Sparkles } from "lucide-react";
+import { EventService } from "@/services/event";
+import type { EventSelectType } from "@/db/schema/event";
 
 const user = Astro.locals.user;
 
 if (!user) {
   return Astro.redirect("/auth/login");
 }
+
+let events: EventSelectType[] = [];
+
+try {
+  events = await EventService.getInstance().getAllPaginated(1, 5);
+} catch (error) {}
 ---
 
 <MainLayout>
@@ -60,7 +68,7 @@ if (!user) {
             <span class="text-sm text-muted-foreground">Next 30 days</span>
           </div>
         </div>
-        <UpcomingEvents client:load />
+        <UpcomingEvents client:load upcomingEvents={events} />
       </section>
     </div>
   </div>

@@ -15,6 +15,7 @@ import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 interface IEventService {
   create(data: EventInsertType): Promise<number>;
   get(id: number): Promise<EventSelectType>;
+  getAllPaginated(page: number, limit: number): Promise<EventSelectType[]>;
   createResponse(responseData: TicketResponseInsertType): Promise<number>;
   getAllResponse(eventId: number): Promise<TicketResponseSelectType[]>;
 }
@@ -81,5 +82,18 @@ export class EventService implements IEventService {
       .where(eq(eventTable.id, eventId));
 
     return responses;
+  }
+
+  async getAllPaginated(
+    page: number,
+    limit: number
+  ): Promise<EventSelectType[]> {
+    const events = await this.db
+      .select()
+      .from(eventTable)
+      .limit(limit)
+      .offset((page - 1) * limit);
+
+    return events;
   }
 }

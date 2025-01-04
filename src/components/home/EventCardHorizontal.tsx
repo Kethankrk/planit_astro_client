@@ -4,36 +4,38 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Calendar, IndianRupee, Clock, Users } from "lucide-react";
 
 interface EventCardHorizontalProps {
-  imageUrl: string;
+  id: number;
+  banner: string;
   title: string;
   location: string;
-  startDate: string;
+  startAt: string;
   startingPrice: number;
   tags?: string[];
   description: string;
   attendees: number;
-  time: string;
+  endingAt: string;
 }
 
 export default function EventCardHorizontal({
-  imageUrl,
+  id,
+  banner,
   title,
   location,
-  startDate,
+  startAt,
   startingPrice,
   tags = [],
   description,
   attendees,
-  time,
+  endingAt,
 }: EventCardHorizontalProps) {
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
       <div className="flex flex-col md:flex-row">
-        <div className="relative w-full md:w-72 h-48">
+        <div className="relative w-full md:w-72">
           <img
-            src={imageUrl}
+            src={banner}
             alt={title}
-            className="object-cover w-full h-full"
+            className="object-cover h-48 w-full md:h-full max-h-72"
           />
           <div className="absolute top-4 left-4 flex gap-2">
             {tags.map((tag, index) => (
@@ -63,11 +65,11 @@ export default function EventCardHorizontal({
               </div>
               <div className="flex items-center text-sm text-muted-foreground">
                 <Calendar className="mr-2 h-4 w-4" />
-                {startDate}
+                {startAt}
               </div>
               <div className="flex items-center text-sm text-muted-foreground">
                 <Clock className="mr-2 h-4 w-4" />
-                {time}
+                {endingAt}
               </div>
               <div className="flex items-center text-sm text-muted-foreground">
                 <Users className="mr-2 h-4 w-4" />
@@ -80,7 +82,9 @@ export default function EventCardHorizontal({
                 <IndianRupee className="mr-2 h-4 w-4" />
                 Starts from ₹{startingPrice.toLocaleString()}
               </div>
-              <Button>View Details</Button>
+              <a href={`/event/${id}`}>
+                <Button>View Details</Button>
+              </a>
             </div>
           </div>
         </CardContent>
