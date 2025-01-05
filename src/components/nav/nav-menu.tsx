@@ -29,10 +29,7 @@ export function NavMenu() {
             <NavigationMenuTrigger>My Events</NavigationMenuTrigger>
             <NavigationMenuContent>
               <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-                <ListItem
-                  title="Participating Events"
-                  href="/participating-events"
-                >
+                <ListItem title="Joined Events" href="/event/joined">
                   View the events you are participating in.
                 </ListItem>
                 <ListItem title="Managed Events" href="/event/managed">

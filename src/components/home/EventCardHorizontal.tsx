@@ -18,7 +18,7 @@ export default function EventCardHorizontal({
           <img
             src={eventData.banner}
             alt={eventData.title}
-            className="object-cover h-48 w-full md:h-full max-h-72"
+            className="object-cover h-48 w-full md:h-full max-h-72 transition-all hover:scale-105"
           />
         </div>
         <CardContent className="flex-1 p-6">

@@ -1,0 +1,21 @@
+---
+import EventCardHorizontal from "@/components/home/EventCardHorizontal";
+import MainLayout from "@/layout/MainLayout.astro";
+import { EventService, type EventListType } from "@/services/event";
+let joinedEvents: EventListType[] = [];
+
+try {
+  joinedEvents = await EventService.getInstance().getJoinedEvents(
+    Astro.locals.user!.email
+  );
+} catch (error) {
+  console.log(error);
+}
+---
+
+<MainLayout>
+  <h1>Joined Events</h1>
+  <div>
+    {joinedEvents.map((data) => <EventCardHorizontal eventData={data} />)}
+  </div>
+</MainLayout>

@@ -139,4 +139,28 @@ export class EventService implements IEventService {
       endingAt: data.endingAt.toLocaleString(),
     }));
   }
+
+  async getJoinedEvents(email: string): Promise<EventListType[]> {
+    const events = await this.db
+      .select({
+        ...getTableColumns(eventTable),
+        startingPrice: min(ticketTable.price),
+        attendees: count(ticketResponseTable.id),
+      })
+      .from(eventTable)
+      .leftJoin(ticketTable, eq(ticketTable.eventId, eventTable.id))
+      .leftJoin(
+        ticketResponseTable,
+        eq(ticketResponseTable.ticketId, ticketTable.id)
+      )
+      .where(eq(ticketResponseTable.email, email))
+      .groupBy(eventTable.id);
+
+    return events.map((data) => ({
+      ...data,
+      startingPrice: Number(data.startingPrice),
+      startAt: data.startAt.toLocaleString(),
+      endingAt: data.endingAt.toLocaleString(),
+    }));
+  }
 }
