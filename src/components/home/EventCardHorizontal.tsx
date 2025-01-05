@@ -52,7 +52,10 @@ export default function EventCardHorizontal({
             <div className="flex items-center justify-between mt-auto">
               <div className="flex items-center text-sm font-medium">
                 <IndianRupee className="mr-2 h-4 w-4" />
-                Starts from ₹{eventData.startingPrice.toLocaleString()}
+                Starts from{" "}
+                {eventData.startingPrice
+                  ? eventData.startingPrice.toString()
+                  : "FREE"}
               </div>
               <a href={`/event/${eventData.id}`}>
                 <Button>View Details</Button>
