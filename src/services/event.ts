@@ -9,7 +9,7 @@ import {
   type TicketResponseSelectType,
 } from "@/db/schema/event";
 import { CustomError } from "@/lib/api";
-import { eq, getTableColumns } from "drizzle-orm";
+import { count, eq, getTableColumns, min } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 interface IEventService {
@@ -19,6 +19,13 @@ interface IEventService {
   createResponse(responseData: TicketResponseInsertType): Promise<number>;
   getAllResponse(eventId: number): Promise<TicketResponseSelectType[]>;
 }
+
+export type EventListType = Omit<EventSelectType, "startAt" | "endingAt"> & {
+  startAt: string;
+  endingAt: string;
+  startingPrice: number;
+  attendees: number;
+};
 
 export class EventService implements IEventService {
   private db: PostgresJsDatabase;
@@ -95,5 +102,29 @@ export class EventService implements IEventService {
       .offset((page - 1) * limit);
 
     return events;
+  }
+
+  async getManagedEvents(userId: string): Promise<EventListType[]> {
+    const events = await this.db
+      .select({
+        ...getTableColumns(eventTable),
+        startingPrice: min(ticketTable.price),
+        attendees: count(ticketResponseTable.id),
+      })
+      .from(eventTable)
+      .leftJoin(ticketTable, eq(ticketTable.eventId, eventTable.id))
+      .leftJoin(
+        ticketResponseTable,
+        eq(ticketResponseTable.ticketId, ticketTable.id)
+      )
+      .where(eq(eventTable.userId, userId))
+      .groupBy(eventTable.id);
+
+    return events.map((data) => ({
+      ...data,
+      startingPrice: Number(data.startingPrice),
+      startAt: data.startAt.toLocaleString(),
+      endingAt: data.endingAt.toLocaleString(),
+    }));
   }
 }

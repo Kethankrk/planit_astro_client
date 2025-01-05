@@ -35,14 +35,14 @@ export function NavMenu() {
                 >
                   View the events you are participating in.
                 </ListItem>
-                <ListItem title="Created Events" href="/created-events">
+                <ListItem title="Managed Events" href="/event/managed">
                   View the events you are participating in.
                 </ListItem>
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <a href="/create-event">
+            <a href="/event/create">
               <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                 Create Event
               </NavigationMenuLink>
