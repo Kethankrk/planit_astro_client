@@ -19,6 +19,7 @@ interface IContributorService {
   create(inputData: ContributorsCallInsertType): Promise<number>;
   getAll(eventId: number): Promise<Contributor[]>;
   getCall(eventId: number): Promise<ContributorsCallSelectType[]>;
+  getAllCall(): Promise<ContributorsCallSelectType[]>;
 }
 
 export class ContributorService implements IContributorService {
@@ -70,5 +71,8 @@ export class ContributorService implements IContributorService {
       .select()
       .from(contributorsCallTable)
       .where(eq(contributorsCallTable.eventId, eventId));
+  }
+  async getAllCall(): Promise<ContributorsCallSelectType[]> {
+    return await this.db.select().from(contributorsCallTable);
   }
 }

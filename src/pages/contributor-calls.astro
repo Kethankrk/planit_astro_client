@@ -1,0 +1,17 @@
+---
+import ContributorsCallCard from "@/components/event/ContributorsCallCard";
+import type { ContributorsCallSelectType } from "@/db/schema/contributors";
+import MainLayout from "@/layout/MainLayout.astro";
+import { ContributorService } from "@/services/contributor";
+let calls: ContributorsCallSelectType[] = [];
+
+try {
+  calls = await ContributorService.getInstance().getAllCall();
+} catch (error) {}
+---
+
+<MainLayout>
+  <div class="grid grid-cols-1 gap-5">
+    {calls.map((call) => <ContributorsCallCard call={call} />)}
+  </div>
+</MainLayout>

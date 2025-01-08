@@ -12,46 +12,44 @@ import {
 } from "@/components/ui/navigation-menu";
 import { ProfileDropDown } from "./profile";
 import { ModeToggle } from "../ModeToggle";
+import { NavLink } from "./nav-link";
 
-export function NavMenu() {
+interface Props {
+  currentPath: string;
+}
+
+export function NavMenu({ currentPath }: Props) {
   return (
     <nav className="px-10 py-4 flex justify-center border-b fixed w-full top-0 bg-background/30 backdrop-blur-lg z-20">
       <NavigationMenu>
         <NavigationMenuList>
-          <NavigationMenuItem>
-            <a href="/">
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                Home
-              </NavigationMenuLink>
-            </a>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavigationMenuTrigger>My Events</NavigationMenuTrigger>
-            <NavigationMenuContent>
-              <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-                <ListItem title="Joined Events" href="/event/joined">
-                  View the events you are participating in.
-                </ListItem>
-                <ListItem title="Managed Events" href="/event/managed">
-                  View the events you are participating in.
-                </ListItem>
-              </ul>
-            </NavigationMenuContent>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <a href="/event/create">
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                Create Event
-              </NavigationMenuLink>
-            </a>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <a href="/docs">
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                Documentation
-              </NavigationMenuLink>
-            </a>
-          </NavigationMenuItem>
+          {NavLink.map((navItem) =>
+            navItem.isDropdown ? (
+              <NavigationMenuItem>
+                <NavigationMenuTrigger>{navItem.title}</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+                    {navItem.children.map((item) => (
+                      <ListItem title={item.title} href={item.link}>
+                        {item.description}
+                      </ListItem>
+                    ))}
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            ) : (
+              <NavigationMenuItem>
+                <a href={navItem.link}>
+                  <NavigationMenuLink
+                    className={navigationMenuTriggerStyle()}
+                    active={navItem.link == currentPath}
+                  >
+                    {navItem.title}
+                  </NavigationMenuLink>
+                </a>
+              </NavigationMenuItem>
+            )
+          )}
         </NavigationMenuList>
       </NavigationMenu>
       <div className="absolute right-20 flex gap-4 items-center">
