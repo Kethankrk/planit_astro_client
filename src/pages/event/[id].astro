@@ -11,10 +11,13 @@ import {ContributorService} from "@/services/contributor"
 import { CustomError } from "@/lib/api";
 import { CallforContributorsForm } from "@/components/event/CreateCallForContributors";
 import type { EventSelectType } from "@/db/schema/event";
+import type { ContributorsCallSelectType } from "@/db/schema/contributors";
+import ContributorsCallCard from "@/components/event/ContributorsCallCard";
 const { id } = Astro.params;
 let eventData: EventSelectType;
 let tickets = [];
 let contributors = []
+let contributorsCall: ContributorsCallSelectType[] = [];
 let purchasedTicketIds: number[] = []
 let isOwner = false;
 try {
@@ -28,6 +31,8 @@ try {
   tickets = await TicketService.getInstance().getAll(eventId);
 
   contributors = await ContributorService.getInstance().getAll(eventId)
+
+  contributorsCall = await ContributorService.getInstance().getCall(eventId)
 
   const purchasedTickets = await TicketService.getInstance().ticketsFromOneEvent(eventId, Astro.locals.user!.email)
   purchasedTicketIds = purchasedTickets.map(ticket => ticket.id)
@@ -103,16 +108,18 @@ try {
         ))
       }
     </div>
-    <div class="flex justify-between items-center mt-20">
-      <h2 class="text-2xl font-bold">Contributors</h2>
-      <CallforContributorsForm buttonText="Create call for contributors" eventId={id!} client:load/>
-    </div>
-    <div class="mt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-      {
-        contributors.map(contributor => (
-          <p>{contributor.name}</p>
-        ))
-      }
-    </div>
+    <section class="mt-20">
+      <div class="flex justify-between items-center">
+        <h2 class="text-2xl font-bold">Contributors Call</h2>
+        <CallforContributorsForm buttonText="Create call for contributors" eventId={id!} client:load/>
+      </div>
+      <div class="mt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {
+          contributorsCall.map(call => (
+            <ContributorsCallCard call={call}/>
+          ))
+        }
+      </div>
+    </section>
   </div>
 </MainLayout>

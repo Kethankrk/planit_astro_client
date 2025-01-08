@@ -4,6 +4,7 @@ import {
   contributorsCallResponseTable,
   contributorsCallTable,
   type ContributorsCallInsertType,
+  type ContributorsCallSelectType,
 } from "@/db/schema/contributors";
 import { eq } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
@@ -17,6 +18,7 @@ type Contributor = {
 interface IContributorService {
   create(inputData: ContributorsCallInsertType): Promise<number>;
   getAll(eventId: number): Promise<Contributor[]>;
+  getCall(eventId: number): Promise<ContributorsCallSelectType[]>;
 }
 
 export class ContributorService implements IContributorService {
@@ -61,5 +63,12 @@ export class ContributorService implements IContributorService {
       .where(eq(contributorsCallTable.eventId, eventId));
 
     return contributors;
+  }
+
+  async getCall(eventId: number): Promise<ContributorsCallSelectType[]> {
+    return await this.db
+      .select()
+      .from(contributorsCallTable)
+      .where(eq(contributorsCallTable.eventId, eventId));
   }
 }
