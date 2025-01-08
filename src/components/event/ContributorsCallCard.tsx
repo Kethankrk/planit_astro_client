@@ -8,12 +8,17 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { UserPlus, FileText, UserCircle } from "lucide-react";
 import type { ContributorsCallSelectType } from "@/db/schema/contributors";
+import { CallResponseForm } from "@/components/event/CallResponseForm";
+
+interface Props {
+  call: ContributorsCallSelectType;
+  isPublicList?: boolean;
+}
 
 export default function ContributorsCallCard({
   call,
-}: {
-  call: ContributorsCallSelectType;
-}) {
+  isPublicList = false,
+}: Props) {
   return (
     <Card className="w-full hover:shadow-lg transition-shadow duration-300">
       <CardHeader>
@@ -30,9 +35,12 @@ export default function ContributorsCallCard({
           <FileText className="h-5 w-5 text-muted-foreground mt-0.5" />
           <p className="text-sm">{call.description}</p>
         </div>
-        <div className="flex items-center gap-2">
-          <UserCircle className="h-5 w-5 text-muted-foreground" />
-          <Badge variant="secondary">{call.role}</Badge>
+        <div className="flex justify-between">
+          <div className="flex items-center gap-2">
+            <UserCircle className="h-5 w-5 text-muted-foreground" />
+            <Badge variant="secondary">{call.role}</Badge>
+          </div>
+          {isPublicList && <CallResponseForm />}
         </div>
       </CardContent>
     </Card>

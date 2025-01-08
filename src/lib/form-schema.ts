@@ -35,3 +35,7 @@ export const CallforContributorsFormSchema = z.object({
   description: z.string().min(5),
   role: z.string(),
 });
+
+export const CallforContributorsResponseFormSchema = z.object({
+  bio: z.string().min(20),
+});

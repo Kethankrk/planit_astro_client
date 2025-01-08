@@ -12,6 +12,10 @@ try {
 
 <MainLayout>
   <div class="grid grid-cols-1 gap-5">
-    {calls.map((call) => <ContributorsCallCard call={call} />)}
+    {
+      calls.map((call) => (
+        <ContributorsCallCard call={call} isPublicList client:load />
+      ))
+    }
   </div>
 </MainLayout>
