@@ -29,3 +29,9 @@ export const profileFormSchema = z.object({
     message: "Address must be at least 5 characters.",
   }),
 });
+
+export const CallforContributorsFormSchema = z.object({
+  title: z.string().min(4),
+  description: z.string().min(5),
+  role: z.string(),
+});

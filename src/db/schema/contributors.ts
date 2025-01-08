@@ -1,6 +1,7 @@
 import { integer, pgTable, serial, text } from "drizzle-orm/pg-core";
 import { eventTable } from "./event";
 import { userTable } from "./auth";
+import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 
 export const contributorsCallTable = pgTable("contributors-call", {
   id: serial("id").primaryKey(),
@@ -25,3 +26,17 @@ export const contributorsCallResponseTable = pgTable(
       .references(() => contributorsCallTable.id),
   }
 );
+
+export type ContributorsCallInsertType = InferInsertModel<
+  typeof contributorsCallTable
+>;
+export type ContributorsCallSelectType = InferSelectModel<
+  typeof contributorsCallTable
+>;
+
+export type ContributorsCallResponseInsertType = InferInsertModel<
+  typeof contributorsCallResponseTable
+>;
+export type ContributorsCallResponseSelectType = InferSelectModel<
+  typeof contributorsCallResponseTable
+>;
