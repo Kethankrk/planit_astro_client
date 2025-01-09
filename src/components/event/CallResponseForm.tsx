@@ -21,23 +21,43 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useToast } from "@/hooks/use-toast";
+import { Toaster } from "@/components/ui/sonner";
 import { CallforContributorsResponseFormSchema } from "@/lib/form-schema";
 import { Textarea } from "@/components/ui/textarea";
+import { postHelper } from "@/lib/utils";
+import { toast } from "sonner";
 
-export function CallResponseForm() {
-  const { toast } = useToast();
+interface Props {
+  callId: number;
+}
 
+export function CallResponseForm({ callId }: Props) {
   const form = useForm<z.infer<typeof CallforContributorsResponseFormSchema>>({
     resolver: zodResolver(CallforContributorsResponseFormSchema),
+    defaultValues: {
+      callId,
+    },
   });
 
-  function onSubmit(
+  async function onSubmit(
     data: z.infer<typeof CallforContributorsResponseFormSchema>
-  ) {}
+  ) {
+    try {
+      const response = postHelper("/api/contributor/apply", data);
+      toast.promise(response, {
+        loading: "Sending data...",
+        success: (_) => "Successfuly submited",
+        error: (_) => "Something went wrong",
+        onAutoClose: () => window.location.reload(),
+      });
+    } catch (error) {
+      toast.error("Unkown error");
+    }
+  }
 
   return (
     <AlertDialog>
+      <Toaster richColors toastOptions={{ duration: 1000 }} />
       <AlertDialogTrigger asChild>
         <Button>Apply</Button>
       </AlertDialogTrigger>

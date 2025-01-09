@@ -38,4 +38,5 @@ export const CallforContributorsFormSchema = z.object({
 
 export const CallforContributorsResponseFormSchema = z.object({
   bio: z.string().min(20),
+  callId: z.number(),
 });

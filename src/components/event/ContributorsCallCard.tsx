@@ -40,7 +40,7 @@ export default function ContributorsCallCard({
             <UserCircle className="h-5 w-5 text-muted-foreground" />
             <Badge variant="secondary">{call.role}</Badge>
           </div>
-          {isPublicList && <CallResponseForm />}
+          {isPublicList && <CallResponseForm callId={call.id} />}
         </div>
       </CardContent>
     </Card>

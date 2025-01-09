@@ -4,6 +4,7 @@ import {
   contributorsCallResponseTable,
   contributorsCallTable,
   type ContributorsCallInsertType,
+  type ContributorsCallResponseInsertType,
   type ContributorsCallSelectType,
 } from "@/db/schema/contributors";
 import { eq } from "drizzle-orm";
@@ -17,6 +18,9 @@ type Contributor = {
 
 interface IContributorService {
   create(inputData: ContributorsCallInsertType): Promise<number>;
+  createResponse(
+    inputData: ContributorsCallResponseInsertType
+  ): Promise<number>;
   getAll(eventId: number): Promise<Contributor[]>;
   getCall(eventId: number): Promise<ContributorsCallSelectType[]>;
   getAllCall(): Promise<ContributorsCallSelectType[]>;
@@ -43,6 +47,17 @@ export class ContributorService implements IContributorService {
       .returning({ id: contributorsCallTable.id });
 
     return contributorCall.id;
+  }
+
+  async createResponse(
+    inputData: ContributorsCallResponseInsertType
+  ): Promise<number> {
+    const [response] = await this.db
+      .insert(contributorsCallResponseTable)
+      .values(inputData)
+      .returning({ id: contributorsCallResponseTable.id });
+
+    return response.id;
   }
 
   async getAll(eventId: number): Promise<Contributor[]> {
