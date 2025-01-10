@@ -40,3 +40,9 @@ export const CallforContributorsResponseFormSchema = z.object({
   bio: z.string().min(20),
   callId: z.number(),
 });
+
+export const RazorPayOrderOptionSchema = z.object({
+  amount: z.number(),
+  currency: z.string().default("INR"),
+  receipt: z.string().optional(),
+});

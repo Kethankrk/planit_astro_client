@@ -17,44 +17,80 @@ import { TicketResponseSchema } from "@/lib/form-schema";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "../ui/card";
 import type { User } from "lucia";
+
 import {
   postHelper,
   toastBadRequest,
   toastServerError,
   toastUnknownError,
 } from "@/lib/utils";
+import type { Orders } from "razorpay/dist/types/orders";
+import { useRazorpay, type RazorpayOrderOptions } from "react-razorpay";
+import type { TicketSelectType } from "@/db/schema/event";
 
 interface Props {
   user: User | null;
-  ticketId: number;
+  ticket: TicketSelectType;
 }
 
-export function TicketBuyForm({ user, ticketId }: Props) {
+export function TicketBuyForm({ user, ticket }: Props) {
   const { toast } = useToast();
+  const { Razorpay, error, isLoading } = useRazorpay();
   const form = useForm<z.infer<typeof TicketResponseSchema>>({
     resolver: zodResolver(TicketResponseSchema),
     defaultValues: {
       name: user?.username,
       email: user?.email,
-      ticketId: ticketId,
+      ticketId: ticket.id,
     },
   });
 
   async function onSubmit(data: z.infer<typeof TicketResponseSchema>) {
     try {
-      const response = await postHelper("/api/ticket/buy", data);
-      if (response.ok) {
-        toast({
-          title: "Ticket purchased successfully",
-          description: "You can now download your ticket from ticket section",
-        });
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        window.location.href = "/";
-      } else if (response.status == 400) {
-        toast(toastBadRequest);
-      } else if (response.status == 500) {
-        toast(toastServerError);
+      const orderOptions: Orders.RazorpayOrderCreateRequestBody = {
+        amount: Number(ticket.price) * 100,
+        currency: "INR",
+      };
+      const createOrderRes = await postHelper(
+        "/api/ticket/order",
+        orderOptions
+      );
+
+      if (!createOrderRes.ok) {
+        throw new Error("Failed to create order");
       }
+
+      const order = (await createOrderRes.json()) as Orders.RazorpayOrder;
+      const options: RazorpayOrderOptions = {
+        key: import.meta.env.RAZORPAY_API_KEY,
+        amount: Number(order.amount),
+        currency: "INR",
+        name: "PlanIt Event Management",
+        description: "Test Mode",
+        order_id: order.id,
+        theme: {
+          color: "#5f63b8",
+        },
+        handler: async (response) => {
+          const res = await postHelper("/api/ticket/buy", data);
+          if (res.ok) {
+            toast({
+              title: "Ticket purchased successfully",
+              description:
+                "You can now download your ticket from ticket section",
+            });
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+            window.location.href = "/";
+          } else if (res.status == 400) {
+            toast(toastBadRequest);
+          } else if (res.status == 500) {
+            toast(toastServerError);
+          }
+        },
+      };
+
+      const rzpay = new Razorpay(options);
+      rzpay.open();
     } catch (error) {
       toast(toastUnknownError);
     }
