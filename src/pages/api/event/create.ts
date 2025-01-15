@@ -1,3 +1,4 @@
+import { esapi } from "@/elasticsearch";
 import { CustomError } from "@/lib/api";
 import { EventService } from "@/services/event";
 import type { APIContext } from "astro";
@@ -77,12 +78,22 @@ export async function POST(context: APIContext): Promise<Response> {
     }
 
     const imageResponse: ImageResponse = await response.json();
-    await new EventService().create({
+    const eventId = await new EventService().create({
       ...validatedResult.data,
       userId: context.locals.user!.id,
       banner: imageResponse.data.url,
       startAt: new Date(validatedResult.data.startAt),
       endingAt: new Date(validatedResult.data.endingAt),
+    });
+    await esapi.index({
+      index: "event",
+      document: {
+        title: validatedResult.data.title,
+        description: validatedResult.data.description,
+        location: validatedResult.data.location,
+        banner: imageResponse.data.url,
+        id: eventId,
+      },
     });
     return Response.json(null, { status: 200 });
   } catch (error) {

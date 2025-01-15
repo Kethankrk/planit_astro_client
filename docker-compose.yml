@@ -23,5 +23,19 @@ services:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: root
     restart: unless-stopped
+  elasticserach:
+    image: "elasticsearch:8.17.0"
+    container_name: elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    volumes:
+      - elasticsearch-vol:/usr/share/elasticsearch/data
+    restart: unless-stopped
+
 volumes:
   planit-db:
+  elasticsearch-vol:
