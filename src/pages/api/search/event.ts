@@ -16,9 +16,10 @@ export async function POST(context: APIContext): Promise<Response> {
           fields: ["title", "description", "location"],
         },
       },
+      size: 10,
     });
 
-    return Response.json({ message: res.hits.hits.map((hit) => hit._source) });
+    return Response.json(res.hits.hits.map((hit) => hit._source));
   } catch (error) {
     console.log(error);
     if (error instanceof CustomError) {
