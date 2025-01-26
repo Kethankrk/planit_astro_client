@@ -2,6 +2,8 @@ import { CustomError, serverError } from "@/lib/api";
 import { TicketResponseSchema } from "@/lib/form-schema";
 import { EventService } from "@/services/event";
 import type { APIContext } from "astro";
+import { svgGenerator } from "./svg/[id]";
+import { TicketService } from "@/services/ticket";
 
 export async function POST(context: APIContext): Promise<Response> {
   try {
@@ -13,14 +15,17 @@ export async function POST(context: APIContext): Promise<Response> {
       throw new CustomError(validatedResult.error.message);
     }
 
-    await EventService.getInstance().createResponse({
+    const responseId = await EventService.getInstance().createResponse({
       ...validatedResult.data,
     });
 
-    return Response.json(
-      { message: "Ticket purchased successfully" },
-      { status: 201 }
-    );
+    if (validatedResult.data.isNFT) {
+      const ticket = await TicketService.getInstance().get(
+        validatedResult.data.ticketId
+      );
+      svgGenerator(ticket!.title, ticket!.price ?? "FREE", responseId);
+    }
+    return Response.json({ responseId }, { status: 201 });
   } catch (error: unknown) {
     console.log(error);
     if (error instanceof CustomError) {

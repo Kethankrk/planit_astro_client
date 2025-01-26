@@ -32,6 +32,7 @@ services:
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xmx300m
     volumes:
       - elasticsearch-vol:/usr/share/elasticsearch/data
     restart: unless-stopped

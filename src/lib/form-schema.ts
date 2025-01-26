@@ -13,6 +13,7 @@ export const TicketResponseSchema = z.object({
   phone: z.string().length(10),
   address: z.string().min(5),
   ticketId: z.number(),
+  isNFT: z.boolean().default(false),
 });
 
 export const profileFormSchema = z.object({

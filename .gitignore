@@ -25,3 +25,5 @@ pnpm-debug.log*
 
 public/ticket-svg/*
 !public/ticket-svg/.gitkeep
+
+src/components/ticket/EventTicketNFT.json

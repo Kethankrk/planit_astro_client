@@ -3,6 +3,7 @@ import {
   ticketResponseTable,
   ticketTable,
   type TicketInsertType,
+  type TicketResponseSelectType,
   type TicketSelectType,
 } from "@/db/schema/event";
 import { CustomError } from "@/lib/api";
@@ -23,6 +24,7 @@ interface ITicketService {
     eventId: number,
     email: string
   ): Promise<TicketSelectType[]>;
+  getResponse(id: number): Promise<TicketResponseSelectType>;
 }
 
 export class TicketService implements ITicketService {
@@ -57,6 +59,14 @@ export class TicketService implements ITicketService {
       .from(ticketTable)
       .where(eq(ticketTable.id, id));
     return ticket;
+  }
+
+  async getResponse(id: number): Promise<TicketResponseSelectType> {
+    const [response] = await this.db
+      .select()
+      .from(ticketResponseTable)
+      .where(eq(ticketResponseTable.id, id));
+    return response;
   }
 
   async getAll(eventId: number): Promise<TicketSelectType[]> {

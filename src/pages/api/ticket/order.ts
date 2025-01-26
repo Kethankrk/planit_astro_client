@@ -1,5 +1,5 @@
 import { CustomError } from "@/lib/api";
-import { razorpayInstance } from "@/lib/api";
+import { RazorpaySingleton } from "@/lib/api";
 import { RazorPayOrderOptionSchema } from "@/lib/form-schema";
 import type { APIContext } from "astro";
 
@@ -10,7 +10,9 @@ export async function POST(context: APIContext): Promise<Response> {
     if (!validatedData.success) {
       throw new CustomError("Invalid input data");
     }
-    const order = await razorpayInstance.orders.create(validatedData.data);
+    const order = await RazorpaySingleton.getInstance().orders.create(
+      validatedData.data
+    );
 
     return Response.json(order);
   } catch (error) {

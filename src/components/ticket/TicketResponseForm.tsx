@@ -27,10 +27,16 @@ import {
 import type { Orders } from "razorpay/dist/types/orders";
 import { useRazorpay, type RazorpayOrderOptions } from "react-razorpay";
 import type { TicketSelectType } from "@/db/schema/event";
+import { mintNFT } from "@/components/ticket/Blockchain";
+import { Checkbox } from "../ui/checkbox";
 
 interface Props {
   user: User | null;
   ticket: TicketSelectType;
+}
+
+interface TicketResponse {
+  responseId: number;
 }
 
 export function TicketBuyForm({ user, ticket }: Props) {
@@ -62,7 +68,7 @@ export function TicketBuyForm({ user, ticket }: Props) {
 
       const order = (await createOrderRes.json()) as Orders.RazorpayOrder;
       const options: RazorpayOrderOptions = {
-        key: import.meta.env.RAZORPAY_API_KEY,
+        key: import.meta.env.VITE_RAZORPAY_API_KEY,
         amount: Number(order.amount),
         currency: "INR",
         name: "PlanIt Event Management",
@@ -79,6 +85,17 @@ export function TicketBuyForm({ user, ticket }: Props) {
               description:
                 "You can now download your ticket from ticket section",
             });
+            if (data.isNFT) {
+              try {
+                const { responseId } = (await res.json()) as TicketResponse;
+                await mintNFT(responseId);
+              } catch (error) {
+                toast({
+                  title: "Failed to mint NFT",
+                  description: "Please try again later",
+                });
+              }
+            }
             await new Promise((resolve) => setTimeout(resolve, 2000));
             window.location.href = "/";
           } else if (res.status == 400) {
@@ -153,6 +170,24 @@ export function TicketBuyForm({ user, ticket }: Props) {
                     placeholder="Enter your address"
                     className="resize-none"
                     {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="isNFT"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="pr-2">
+                  Need ticket in form of NFT?
+                </FormLabel>
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
                   />
                 </FormControl>
                 <FormMessage />

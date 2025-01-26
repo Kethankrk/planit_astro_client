@@ -7,7 +7,7 @@ import path from "path";
 
 export const svgGenerator = async (
   title: string,
-  price: number,
+  price: string,
   id: number
 ) => {
   const svgContent = `
@@ -40,14 +40,15 @@ export const svgGenerator = async (
 
 export async function GET(context: APIContext): Promise<Response> {
   const { id } = context.params;
-  const ticket = await TicketService.getInstance().get(Number(id));
-  if (!ticket) {
-    throw new CustomError("Ticket not found");
+  const ticketRes = await TicketService.getInstance().getResponse(Number(id));
+  if (!ticketRes) {
+    throw new CustomError("Ticket Response not found");
   }
-  const event = await EventService.getInstance().get(ticket.eventId);
+  const ticket = await TicketService.getInstance().get(ticketRes.ticketId);
+
   return Response.json({
-    name: `Planit Ticket - ${event.title}`,
-    description: `Ticket ${ticket.title}`,
+    name: `Planit Ticket - ${ticket!.title}`,
+    description: `Ticket NFT`,
     image: `http://localhost:4321/ticket-svg/ticket-${id}.svg`,
   });
 }
