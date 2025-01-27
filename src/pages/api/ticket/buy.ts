@@ -2,29 +2,30 @@ import { CustomError, serverError } from "@/lib/api";
 import { TicketResponseSchema } from "@/lib/form-schema";
 import { EventService } from "@/services/event";
 import type { APIContext } from "astro";
-import { svgGenerator } from "./svg/[id]";
 import { TicketService } from "@/services/ticket";
 import { sendEmail } from "@/lib/email";
+import { generateSvg } from "@/components/ticket/GenerateSvg";
 
 export async function POST(context: APIContext): Promise<Response> {
   try {
     const inputData = await context.request.json();
-
     const validatedResult = TicketResponseSchema.safeParse(inputData);
-
     if (!validatedResult.success) {
       throw new CustomError(validatedResult.error.message);
     }
-
     const responseId = await EventService.getInstance().createResponse({
       ...validatedResult.data,
     });
-
     if (validatedResult.data.isNFT) {
       const ticket = await TicketService.getInstance().get(
         validatedResult.data.ticketId
       );
-      svgGenerator(ticket!.title, ticket!.price ?? "FREE", responseId);
+      generateSvg({
+        title: ticket!.title,
+        price: ticket!.price ?? "FREE",
+        date: new Date().toLocaleDateString(),
+        id: responseId,
+      });
     } else {
       sendEmail(
         validatedResult.data.email,
