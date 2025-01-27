@@ -4,6 +4,7 @@ import { EventService } from "@/services/event";
 import type { APIContext } from "astro";
 import { svgGenerator } from "./svg/[id]";
 import { TicketService } from "@/services/ticket";
+import { sendEmail } from "@/lib/email";
 
 export async function POST(context: APIContext): Promise<Response> {
   try {
@@ -24,6 +25,12 @@ export async function POST(context: APIContext): Promise<Response> {
         validatedResult.data.ticketId
       );
       svgGenerator(ticket!.title, ticket!.price ?? "FREE", responseId);
+    } else {
+      sendEmail(
+        validatedResult.data.email,
+        "Ticket Purchase",
+        `Your ticket purchase was successful. Your response ID is ${responseId}`
+      );
     }
     return Response.json({ responseId }, { status: 201 });
   } catch (error: unknown) {
