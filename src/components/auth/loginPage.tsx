@@ -105,6 +105,15 @@ export function LoginPage() {
               LOGIN
             </Button>
           </form>
+          <p className="text-sm font-light mt-5">
+            new to planit?{" "}
+            <a
+              href="/auth/signup"
+              className="text-blue-400 hover:underline transition-all"
+            >
+              create an account
+            </a>
+          </p>
         </Form>
       </Card>
     </div>

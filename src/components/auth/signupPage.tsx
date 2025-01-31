@@ -139,6 +139,15 @@ export function SignupPage() {
               Signup
             </Button>
           </form>
+          <p className="text-sm font-light mt-5">
+            already have an account?{" "}
+            <a
+              href="/auth/login"
+              className="text-blue-400 hover:underline transition-all"
+            >
+              login
+            </a>
+          </p>
         </Form>
       </Card>
     </div>
