@@ -6,7 +6,7 @@ import { sessionTable, userTable } from "./schema/auth";
 
 export const db = () => {
   const client = postgres(process.env.DATABASE_URL!);
-  return drizzle({ client, logger: false });
+  return drizzle({ client, logger: true });
 };
 
 export const adapter = new DrizzlePostgreSQLAdapter(

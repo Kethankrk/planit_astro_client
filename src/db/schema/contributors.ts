@@ -10,7 +10,7 @@ export const contributorsCallTable = pgTable("contributors-call", {
   role: text("role").notNull(),
   eventId: integer("event_id")
     .notNull()
-    .references(() => eventTable.id),
+    .references(() => eventTable.id, { onDelete: "cascade" }),
 });
 
 export const contributorsCallResponseTable = pgTable(
@@ -23,7 +23,7 @@ export const contributorsCallResponseTable = pgTable(
       .references(() => userTable.id),
     callId: integer("call_id")
       .notNull()
-      .references(() => contributorsCallTable.id),
+      .references(() => contributorsCallTable.id, { onDelete: "cascade" }),
   }
 );
 

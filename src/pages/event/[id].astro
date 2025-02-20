@@ -58,7 +58,7 @@ try {
     </div>
     <div class="flex justify-between items-center">
       <h2 class="text-3xl font-bold mt-5">{eventData.title}</h2>
-      <EventUserInteractionSection client:only />
+      <EventUserInteractionSection client:only eventId={eventData.id} />
     </div>
     <div class="flex gap-10 mt-5">
       <div class="flex gap-1">
@@ -120,6 +120,8 @@ try {
           ))
         }
       </div>
+    </section>
+    <section>
     </section>
   </div>
 </MainLayout>

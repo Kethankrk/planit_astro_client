@@ -1,4 +1,4 @@
-import { Copy, Heart, Share2 } from "lucide-react";
+import { Copy, Heart, Settings, Share2 } from "lucide-react";
 import { useState } from "react";
 import {
   AlertDialog,
@@ -11,19 +11,84 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Card } from "../ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
-export default function EventUserInteractionSection() {
+import { DialogClose } from "@radix-ui/react-dialog";
+import { actions } from "astro:actions";
+
+interface Props {
+  eventId: number;
+}
+
+export default function EventUserInteractionSection({ eventId }: Props) {
   const [isLiked, setIsLiked] = useState(false);
 
   const handleLike = () => {
     setIsLiked(!isLiked);
   };
 
+  const deleteEvent = async () => {
+    const { error } = await actions.deleteEvent({ id: eventId });
+    if (!error) {
+      window.location.href = "/";
+    }
+  };
+
   const pageUrl = window.location.href;
   const message = "Check out this event!";
 
   return (
-    <div className="flex gap-5">
+    <div className="flex gap-5 items-center">
+      <Dialog>
+        <DialogTrigger asChild>
+          <Settings className="hover:scale-105 cursor-pointer" />
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Manage Event</DialogTitle>
+          </DialogHeader>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="destructive">Delete Event</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Are you sure?</DialogTitle>
+                <DialogDescription>
+                  This action will permanently delete this event.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex gap-2">
+                <Button
+                  variant="destructive"
+                  className="w-full"
+                  onClick={deleteEvent}
+                >
+                  Delete Event
+                </Button>
+                <DialogClose className="w-full">
+                  <Button variant="secondary" className="w-full">
+                    Cancel
+                  </Button>
+                </DialogClose>
+              </div>
+            </DialogContent>
+          </Dialog>
+          <DialogClose>
+            <Button variant="secondary" className="w-full">
+              Cancel
+            </Button>
+          </DialogClose>
+        </DialogContent>
+      </Dialog>
       <Heart
         fill={isLiked ? "red" : "transparent"}
         onClick={handleLike}

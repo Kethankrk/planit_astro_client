@@ -31,7 +31,7 @@ export const ticketTable = pgTable("ticket", {
   perks: text("perks"),
   eventId: integer("event_id")
     .notNull()
-    .references(() => eventTable.id),
+    .references(() => eventTable.id, { onDelete: "cascade" }),
 });
 
 export const ticketResponseTable = pgTable("ticket-response", {
@@ -40,9 +40,9 @@ export const ticketResponseTable = pgTable("ticket-response", {
   email: text("email").notNull(),
   phone: text("phone").notNull(),
   address: text("address").notNull(),
-  ticketId: integer("ticket_id")
-    .notNull()
-    .references(() => ticketTable.id),
+  ticketId: integer("ticket_id").references(() => ticketTable.id, {
+    onDelete: "set null",
+  }),
 });
 
 export type EventInsertType = InferInsertModel<typeof eventTable>;

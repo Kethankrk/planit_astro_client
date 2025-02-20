@@ -57,6 +57,13 @@
       "when": 1736081938434,
       "tag": "0007_superb_shiva",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1740064240357,
+      "tag": "0008_fancy_falcon",
+      "breakpoints": true
     }
   ]
 }
