@@ -7,9 +7,8 @@ import { CalendarDays, Sparkles } from "lucide-react";
 import { EventService, type EventListType } from "@/services/event";
 
 const user = Astro.locals.user;
-
-if (!user) {
-  return Astro.redirect("/auth/login");
+if (user && !user.verified) {
+  return Astro.redirect("/verify-email");
 }
 
 let events: EventListType[] = [];

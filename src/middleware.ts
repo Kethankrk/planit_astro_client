@@ -1,7 +1,15 @@
 import { lucia } from "@/lib/auth";
+import { getActionContext } from "astro:actions";
 import { defineMiddleware } from "astro:middleware";
 
+const authRoutes = ["/auth/login", "/auth/signup", "/verify-email"];
+
 export const onRequest = defineMiddleware(async (context, next) => {
+  const { action } = getActionContext(context);
+  if (authRoutes.includes(context.url.pathname)) {
+    return next();
+  }
+
   const sessionId = context.cookies.get(lucia.sessionCookieName)?.value ?? null;
   if (!sessionId) {
     context.locals.user = null;
@@ -28,5 +36,13 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
   context.locals.session = session;
   context.locals.user = user;
+
+  if (action) {
+    return next();
+  }
+
+  if (user && !user.verified) {
+    return context.redirect("/verify-email");
+  }
   return next();
 });

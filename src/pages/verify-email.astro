@@ -1,0 +1,10 @@
+---
+import MainLayout from "@/layout/MainLayout.astro";
+import { EmailOtpForm } from "@/components/auth/emailVerification";
+---
+
+<MainLayout>
+  <div class="flex justify-center items-center min-h-[calc(100vh-150px)]">
+    <EmailOtpForm client:load />
+  </div>
+</MainLayout>

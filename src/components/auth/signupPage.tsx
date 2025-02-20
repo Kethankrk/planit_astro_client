@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card } from "../ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { actions } from "astro:actions";
 
 const formSchema = z
   .object({
@@ -53,7 +54,8 @@ export function SignupPage() {
         }),
       });
       if (response.status == 201) {
-        window.location.href = "/";
+        await actions.sendVerificationOtp.orThrow({ email: values.email });
+        window.location.href = "/verify-email";
       } else if (response.status == 400) {
         toast({
           title: "Authentication Failed",

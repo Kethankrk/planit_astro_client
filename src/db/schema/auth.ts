@@ -1,9 +1,10 @@
-import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 
 export const userTable = pgTable("user", {
   id: text("id").primaryKey(),
   email: text("email").notNull(),
+  verified: boolean("verified").notNull().default(false),
   username: text("username").notNull(),
   password: text("password").notNull(),
 });
