@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import { userTable } from "@/db/schema/auth";
 import { eventTable } from "@/db/schema/event";
+import { lucia } from "@/lib/auth";
 import { sendEmail } from "@/lib/email";
 import { defineAction } from "astro:actions";
 import { z } from "astro:schema";
@@ -28,7 +29,6 @@ export const server = {
       );
     },
   }),
-
   verifyEmail: defineAction({
     input: z.object({
       otp: z.string().min(6),
@@ -39,6 +39,20 @@ export const server = {
         .update(userTable)
         .set({ verified: true })
         .where(eq(userTable.id, user!.id));
+    },
+  }),
+
+  logout: defineAction({
+    handler: async (input, context) => {
+      try {
+        const { session } = context.locals;
+        if (!session) return;
+        await lucia.invalidateSession(session.id);
+        const cookie = lucia.createBlankSessionCookie();
+        context.cookies.set(cookie.name, cookie.value, cookie.attributes);
+      } catch (error) {
+        console.log(error);
+      }
     },
   }),
 };
