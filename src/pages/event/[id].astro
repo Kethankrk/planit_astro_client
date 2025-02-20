@@ -58,7 +58,7 @@ try {
     </div>
     <div class="flex justify-between items-center">
       <h2 class="text-3xl font-bold mt-5">{eventData.title}</h2>
-      <EventUserInteractionSection client:only eventId={eventData.id} />
+      <EventUserInteractionSection client:only eventId={eventData.id} isOwner={isOwner} />
     </div>
     <div class="flex gap-10 mt-5">
       <div class="flex gap-1">
@@ -108,19 +108,24 @@ try {
         ))
       }
     </div>
-    <section class="mt-20">
-      <div class="flex justify-between items-center">
-        <h2 class="text-2xl font-bold">Contributors Call</h2>
-        <CallforContributorsForm buttonText="Create call for contributors" eventId={id!} client:load/>
-      </div>
-      <div class="mt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {
-          contributorsCall.map(call => (
-            <ContributorsCallCard call={call}/>
-          ))
-        }
-      </div>
-    </section>
+    {
+      isOwner && (
+        <section class="mt-20">
+          <div class="flex justify-between items-center">
+            <h2 class="text-2xl font-bold">Contributors Call</h2>
+            <CallforContributorsForm buttonText="Create call for contributors" eventId={id!} client:load/>
+          </div>
+          <div class="mt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {
+              contributorsCall.map(call => (
+                <ContributorsCallCard call={call}/>
+              ))
+            }
+          </div>
+        </section>
+      )
+    }
+    
     <section>
     </section>
   </div>

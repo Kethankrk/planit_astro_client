@@ -25,7 +25,7 @@ export function TicketCard({
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-xl">{ticket.title}</CardTitle>
         <p className="text-sm font-medium">
-          {ticket.limit ? `${ticket.limit} left` : "Unlimited"}
+          {ticket.limit != null ? `${ticket.limit} left` : "Unlimited"}
         </p>
       </CardHeader>
       <CardContent>
@@ -37,9 +37,13 @@ export function TicketCard({
         </p>
       </CardContent>
       <CardFooter className="gap-5">
-        <a href={`/ticket/${ticket.id}`}>
-          <Button className="w-full">Book Now</Button>
-        </a>
+        {ticket.limit == 0 ? (
+          <Button disabled>Sold out</Button>
+        ) : (
+          <a href={`/ticket/${ticket.id}`}>
+            <Button className="w-full">Book Now</Button>
+          </a>
+        )}
         {editable && (
           <CreateTicketOption
             buttonText="Edit"

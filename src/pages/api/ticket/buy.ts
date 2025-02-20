@@ -5,6 +5,9 @@ import type { APIContext } from "astro";
 import { TicketService } from "@/services/ticket";
 import { sendEmail } from "@/lib/email";
 import { generateSvg } from "@/components/ticket/GenerateSvg";
+import { db } from "@/db";
+import { ticketTable } from "@/db/schema/event";
+import { eq, sql } from "drizzle-orm";
 
 export async function POST(context: APIContext): Promise<Response> {
   try {
@@ -16,6 +19,12 @@ export async function POST(context: APIContext): Promise<Response> {
     const responseId = await EventService.getInstance().createResponse({
       ...validatedResult.data,
     });
+
+    await db()
+      .update(ticketTable)
+      .set({ limit: sql`${ticketTable.limit} - 1` })
+      .where(eq(ticketTable.id, validatedResult.data.ticketId));
+
     if (validatedResult.data.isNFT) {
       const ticket = await TicketService.getInstance().get(
         validatedResult.data.ticketId

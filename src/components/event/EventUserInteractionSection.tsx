@@ -23,12 +23,17 @@ import {
 
 import { DialogClose } from "@radix-ui/react-dialog";
 import { actions } from "astro:actions";
+import { is } from "drizzle-orm";
 
 interface Props {
   eventId: number;
+  isOwner: boolean;
 }
 
-export default function EventUserInteractionSection({ eventId }: Props) {
+export default function EventUserInteractionSection({
+  eventId,
+  isOwner,
+}: Props) {
   const [isLiked, setIsLiked] = useState(false);
 
   const handleLike = () => {
@@ -47,56 +52,58 @@ export default function EventUserInteractionSection({ eventId }: Props) {
 
   return (
     <div className="flex gap-5 items-center">
-      <Dialog>
-        <DialogTrigger asChild>
-          <Settings className="hover:scale-105 cursor-pointer" />
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Manage Event</DialogTitle>
-          </DialogHeader>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="destructive">Delete Event</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Are you sure?</DialogTitle>
-                <DialogDescription>
-                  This action will permanently delete this event.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="flex gap-2">
-                <Button
-                  variant="destructive"
-                  className="w-full"
-                  onClick={deleteEvent}
-                >
-                  Delete Event
-                </Button>
-                <DialogClose className="w-full">
-                  <Button variant="secondary" className="w-full">
-                    Cancel
+      {isOwner && (
+        <Dialog>
+          <DialogTrigger asChild>
+            <Settings className="hover:scale-105 cursor-pointer transition-all" />
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Manage Event</DialogTitle>
+            </DialogHeader>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="destructive">Delete Event</Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Are you sure?</DialogTitle>
+                  <DialogDescription>
+                    This action will permanently delete this event.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="flex gap-2">
+                  <Button
+                    variant="destructive"
+                    className="w-full"
+                    onClick={deleteEvent}
+                  >
+                    Delete Event
                   </Button>
-                </DialogClose>
-              </div>
-            </DialogContent>
-          </Dialog>
-          <DialogClose>
-            <Button variant="secondary" className="w-full">
-              Cancel
-            </Button>
-          </DialogClose>
-        </DialogContent>
-      </Dialog>
+                  <DialogClose className="w-full">
+                    <Button variant="secondary" className="w-full">
+                      Cancel
+                    </Button>
+                  </DialogClose>
+                </div>
+              </DialogContent>
+            </Dialog>
+            <DialogClose>
+              <Button variant="secondary" className="w-full">
+                Cancel
+              </Button>
+            </DialogClose>
+          </DialogContent>
+        </Dialog>
+      )}
       <Heart
         fill={isLiked ? "red" : "transparent"}
         onClick={handleLike}
-        className="transition-all"
+        className="transition-all hover:scale-105 cursor-pointer"
       />
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Share2 />
+          <Share2 className="hover:scale-105 cursor-pointer transition-all" />
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
