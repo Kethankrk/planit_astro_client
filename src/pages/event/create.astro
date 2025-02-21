@@ -1,11 +1,41 @@
 ---
 import { EventCreateForm } from "@/components/event-create/EventCreateForm";
-
+import { db } from "@/db";
+import { eventTable } from "@/db/schema/event";
 import MainLayout from "@/layout/MainLayout.astro";
+import { count, eq } from "drizzle-orm";
+import { EVENTLIMIT } from "@/lib/utils";
+
+const user = Astro.locals.user;
+
+if (!user) {
+  return Astro.redirect("/auth/login");
+}
+
+let userEvents = 0;
+
+try {
+  const [{ len }] = await db()
+    .select({ len: count() })
+    .from(eventTable)
+    .where(eq(eventTable.userId, user.id));
+  userEvents = len;
+} catch (error) {}
 ---
 
 <MainLayout>
   <div class="max-w-4xl mx-auto">
-    <EventCreateForm client:load />
+    {
+      userEvents >= EVENTLIMIT ? (
+        <div>
+          <p>
+            Max user limit reached!, You can only create {EVENTLIMIT} events at
+            a time.
+          </p>
+        </div>
+      ) : (
+        <EventCreateForm client:load />
+      )
+    }
   </div>
 </MainLayout>

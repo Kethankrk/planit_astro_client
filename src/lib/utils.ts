@@ -52,3 +52,5 @@ export const toastUnknownError: ToasterToast = {
   description: "Please try again later",
   variant: "destructive",
 };
+
+export const EVENTLIMIT = 2;
