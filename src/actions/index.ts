@@ -1,3 +1,4 @@
+import { generateSvg } from "@/components/ticket/GenerateSvg";
 import { db } from "@/db";
 import { userTable } from "@/db/schema/auth";
 import { eventTable } from "@/db/schema/event";
@@ -50,6 +51,21 @@ export const server = {
         await lucia.invalidateSession(session.id);
         const cookie = lucia.createBlankSessionCookie();
         context.cookies.set(cookie.name, cookie.value, cookie.attributes);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  }),
+
+  generateSvgAction: defineAction({
+    handler: async () => {
+      try {
+        await generateSvg({
+          title: "Test Event",
+          price: "FREE",
+          date: "2022-01-01",
+          id: 10,
+        });
       } catch (error) {
         console.log(error);
       }

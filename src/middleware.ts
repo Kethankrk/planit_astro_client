@@ -20,7 +20,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (!sessionId) {
     context.locals.user = null;
     context.locals.session = null;
-    console.log("no session id");
     return context.redirect("/auth/login");
   }
 

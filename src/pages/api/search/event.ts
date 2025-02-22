@@ -16,7 +16,7 @@ export async function POST(context: APIContext): Promise<Response> {
           fields: ["title", "description", "location"],
         },
       },
-      size: 10,
+      size: 5,
     });
 
     return Response.json(res.hits.hits.map((hit) => hit._source));

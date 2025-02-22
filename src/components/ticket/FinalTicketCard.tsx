@@ -125,19 +125,14 @@ const FinalTicketCard: React.FC<EventTicketProps> = ({
             background: "linear-gradient(135deg, #6366f1, #3b82f6)",
           }}
         ></div>
-        {qr ? (
-          <img
-            src={qr || "/placeholder.svg"}
-            alt="QR Code"
-            style={{
-              width: "180px",
-              height: "180px",
-              borderRadius: "8px",
-            }}
-          />
-        ) : (
-          <QrCode size={180} color="white" />
-        )}
+
+        <img
+          src={qr || "/placeholder.svg"}
+          alt="QR Code"
+          width={200}
+          height={300}
+        />
+
         <p
           style={{
             marginTop: "16px",
