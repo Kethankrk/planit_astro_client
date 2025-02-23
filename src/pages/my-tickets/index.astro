@@ -1,0 +1,20 @@
+---
+import { FinalTicketCard } from "@/components/ticket/FinalTicketCard";
+import QRCode from "qrcode";
+import MainLayout from "@/layout/MainLayout.astro";
+
+const qrCode = await QRCode.toDataURL("https://www.google.com");
+---
+
+<MainLayout>
+  <div>My Tickets</div>
+  <FinalTicketCard
+    title="Basic event"
+    date="23/02/2025"
+    email="test@gmail.com"
+    location="Kozhikode"
+    id="2"
+    price={200}
+    qr={qrCode}
+  />
+</MainLayout>

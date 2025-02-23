@@ -16,6 +16,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return next();
   }
 
+  if (context.url.pathname.startsWith("/ticket/verify")) {
+    return next();
+  }
+
   const sessionId = context.cookies.get(lucia.sessionCookieName)?.value ?? null;
   if (!sessionId) {
     context.locals.user = null;

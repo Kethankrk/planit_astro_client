@@ -2,9 +2,8 @@ import { CustomError, serverError } from "@/lib/api";
 import { TicketResponseSchema } from "@/lib/form-schema";
 import { EventService } from "@/services/event";
 import type { APIContext } from "astro";
-import { TicketService } from "@/services/ticket";
 import { sendEmail } from "@/lib/email";
-import { generateSvg } from "@/components/ticket/GenerateSvg";
+import { generatePNGorPDF } from "@/components/ticket/GeneratePngOrPdf";
 import { db } from "@/db";
 import { ticketTable } from "@/db/schema/event";
 import { eq, sql } from "drizzle-orm";
@@ -26,20 +25,19 @@ export async function POST(context: APIContext): Promise<Response> {
       .where(eq(ticketTable.id, validatedResult.data.ticketId));
 
     if (validatedResult.data.isNFT) {
-      const ticket = await TicketService.getInstance().get(
-        validatedResult.data.ticketId
-      );
-      generateSvg({
-        title: ticket!.title,
-        price: ticket!.price ?? "FREE",
-        date: new Date().toLocaleDateString(),
-        id: responseId,
-      });
+      await generatePNGorPDF(responseId, "png");
     } else {
-      sendEmail(
+      await generatePNGorPDF(responseId, "pdf");
+      await sendEmail(
         validatedResult.data.email,
         "Ticket Purchase",
-        `Your ticket purchase was successful. Your response ID is ${responseId}`
+        `Your ticket purchase was successful. Your response ID is ${responseId}`,
+        [
+          {
+            filename: `ticket-${responseId}.pdf`,
+            path: `./public/ticket/ticket-${responseId}.pdf`,
+          },
+        ]
       );
     }
     return Response.json({ responseId }, { status: 201 });

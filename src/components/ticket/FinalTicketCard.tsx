@@ -1,150 +1,82 @@
-import type React from "react";
-import { QrCode } from "lucide-react";
+import { Mail, MapPin } from "lucide-react";
 
-interface EventTicketProps {
+interface TicketProps {
   title: string;
-  price: string;
+  email: string;
   date: string;
-  id: number;
+  location: string;
+  id: string;
+  price: number;
   qr: string;
+  type?: "nft" | "pdf";
 }
 
-const FinalTicketCard: React.FC<EventTicketProps> = ({
+export const FinalTicketCard = ({
   title,
-  price,
+  email,
   date,
+  location,
   id,
+  price,
   qr,
-}) => {
+  type = "pdf",
+}: TicketProps) => {
   return (
     <div
-      style={{
-        width: "600px",
-        height: "300px",
-        background: "linear-gradient(135deg, #6366f1, #3b82f6)",
-        borderRadius: "16px",
-        boxShadow: "0 10px 25px rgba(0, 0, 0, 0.1)",
-        display: "flex",
-        overflow: "hidden",
-        fontFamily: "Arial, sans-serif",
-        color: "white",
-      }}
+      className={`bg-white shadow-2xl rounded-xl overflow-hidden w-full mx-auto border border-foreground flex flex-col ${
+        type === "nft" ? "max-w-[400px] h-[400px] aspect-square" : "max-w-4xl"
+      }`}
+      id="ticket"
     >
       <div
-        style={{
-          flex: "1",
-          padding: "24px",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          position: "relative",
-        }}
+        className={`flex ${
+          type === "nft" ? "flex-col" : "flex-col md:flex-row"
+        }`}
       >
         <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-          }}
+          className={`bg-background p-6 relative flex flex-col ${
+            type === "nft" ? "justify-center items-center" : "w-2/3"
+          }`}
         >
-          <h2
-            style={{
-              fontSize: "28px",
-              fontWeight: "bold",
-              marginBottom: "16px",
-              textShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-            }}
-          >
-            {title}
-          </h2>
-          <p
-            style={{
-              fontSize: "20px",
-              marginBottom: "8px",
-            }}
-          >
-            Price: ${price}
-          </p>
-          <p
-            style={{
-              fontSize: "16px",
-              marginBottom: "8px",
-            }}
-          >
-            Date: {date}
-          </p>
-          <p
-            style={{
-              fontSize: "14px",
-              opacity: "0.8",
-            }}
-          >
-            Ticket ID: {id}
-          </p>
-        </div>
-        <div
-          style={{
-            fontSize: "12px",
-            opacity: "0.7",
-          }}
-        >
-          This ticket is non-transferable and non-refundable.
-        </div>
-        <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            right: "-30px",
-            width: "60px",
-            height: "60px",
-            borderRadius: "50%",
-            background: "white",
-          }}
-        ></div>
-      </div>
-      <div
-        style={{
-          width: "220px",
-          background: "rgba(255, 255, 255, 0.1)",
-          backdropFilter: "blur(10px)",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "24px",
-          position: "relative",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "-30px",
-            width: "60px",
-            height: "60px",
-            borderRadius: "50%",
-            background: "linear-gradient(135deg, #6366f1, #3b82f6)",
-          }}
-        ></div>
+          <div className="absolute top-0 left-0 right-0 h-2 bg-wave-pattern"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-2 bg-wave-pattern transform rotate-180"></div>
 
-        <img
-          src={qr || "/placeholder.svg"}
-          alt="QR Code"
-          width={200}
-          height={300}
-        />
+          <div className="text-center">
+            <h2 className="text-2xl font-extrabold text-white">{title}</h2>
+            <p className="text-sm mt-2">{date}</p>
+            <div className="flex justify-center items-center mt-2">
+              <MapPin className="w-4 h-4 mr-1" />
+              <span className="text-xs">{location}</span>
+            </div>
+          </div>
 
-        <p
-          style={{
-            marginTop: "16px",
-            fontSize: "14px",
-            textAlign: "center",
-          }}
+          <div className="mt-auto text-center">
+            <p className="text-xs">Ticket Holder</p>
+            <div className="flex justify-center items-center text-white">
+              <Mail className="w-4 h-4 mr-1" />
+              <span className="text-xs">{email}</span>
+            </div>
+          </div>
+        </div>
+
+        <div
+          className={`bg-foreground p-6 flex flex-col justify-center items-center ${
+            type === "nft" ? "w-full" : "w-1/3"
+          }`}
         >
-          Scan to verify
-        </p>
+          <img src={qr} alt="qr code" className="w-24 h-24 object-contain" />
+          <p className="text-center text-red-600 font-semibold mt-2">
+            Scan for Entry
+          </p>
+
+          <div className="text-center mt-4">
+            <p className="text-red-600 text-sm font-bold">Price</p>
+            <p className="text-xl font-extrabold text-red-700">
+              ${price.toFixed(2)}
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
-
-export default FinalTicketCard;

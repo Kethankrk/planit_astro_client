@@ -8,11 +8,10 @@ export async function GET(context: APIContext): Promise<Response> {
   if (!ticketRes) {
     throw new CustomError("Ticket Response not found");
   }
-  const ticket = await TicketService.getInstance().get(ticketRes.ticketId);
 
   return Response.json({
-    name: `Planit Ticket - ${ticket!.title}`,
+    name: `Planit Ticket - ${ticketRes.name}`,
     description: `Ticket NFT`,
-    image: `http://localhost:4321/ticket-svg/ticket-${id}.svg`,
+    image: `http://localhost:4321/ticket/ticket-${id}.png`,
   });
 }

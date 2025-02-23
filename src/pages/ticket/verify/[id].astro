@@ -1,0 +1,52 @@
+---
+import { FinalTicketCard } from "@/components/ticket/FinalTicketCard";
+import QRCode from "qrcode";
+import MainLayout from "@/layout/MainLayout.astro";
+import { db } from "@/db";
+import {
+  eventTable,
+  ticketResponseTable,
+  ticketTable,
+} from "@/db/schema/event";
+import { eq } from "drizzle-orm";
+
+type TicketType = "nft" | "pdf";
+
+const qrCode = await QRCode.toDataURL(Astro.url.toString());
+const { id } = Astro.params;
+const [ticketRes] = await db()
+  .select({
+    title: ticketTable.title,
+    email: ticketResponseTable.email,
+    id: ticketResponseTable.id,
+    price: ticketTable.price,
+    location: eventTable.location,
+  })
+  .from(ticketResponseTable)
+  .leftJoin(ticketTable, eq(ticketTable.id, ticketResponseTable.ticketId))
+  .leftJoin(eventTable, eq(eventTable.id, ticketTable.eventId))
+  .where(eq(ticketResponseTable.id, Number(id)));
+console.log(ticketRes);
+const type = (Astro.url.searchParams.get("type") || "pdf") as TicketType;
+---
+
+<MainLayout>
+  {
+    ticketRes ? (
+      <FinalTicketCard
+        title={ticketRes.title ?? "Deleted Event"}
+        date={new Date().toLocaleString()}
+        email={ticketRes.email}
+        location={ticketRes.location ?? "Deleted event"}
+        id={ticketRes.id.toString()}
+        price={Number(ticketRes.price)}
+        qr={qrCode}
+        type={type}
+      />
+    ) : (
+      <p class="text-center text-4xl font-medium text-destructive">
+        Ticket not found
+      </p>
+    )
+  }
+</MainLayout>
