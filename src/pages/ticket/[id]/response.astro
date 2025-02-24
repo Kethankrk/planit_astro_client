@@ -1,0 +1,22 @@
+---
+import MainLayout from "@/layout/MainLayout.astro";
+import { ResponseTable } from "@/components/ticket/ResponseTable";
+import { db } from "@/db";
+import { ticketResponseTable } from "@/db/schema/event";
+import { eq } from "drizzle-orm";
+
+const { id } = Astro.params;
+const responses = await db()
+  .select({
+    id: ticketResponseTable.id,
+    name: ticketResponseTable.name,
+    email: ticketResponseTable.email,
+    phone: ticketResponseTable.phone,
+  })
+  .from(ticketResponseTable)
+  .where(eq(ticketResponseTable.ticketId, Number(id)));
+---
+
+<MainLayout>
+  <ResponseTable responses={responses} />
+</MainLayout>

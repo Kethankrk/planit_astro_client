@@ -36,21 +36,32 @@ export function TicketCard({
           )}
         </p>
       </CardContent>
-      <CardFooter className="gap-5">
-        {ticket.limit == 0 ? (
-          <Button disabled>Sold out</Button>
-        ) : (
-          <a href={`/ticket/${ticket.id}`}>
-            <Button className="w-full">Book Now</Button>
-          </a>
-        )}
+      <CardFooter className="block">
+        <div className="grid grid-cols-2 gap-2">
+          {ticket.limit == 0 ? (
+            <Button disabled className="w-full">
+              Sold out
+            </Button>
+          ) : (
+            <a href={`/ticket/${ticket.id}`}>
+              <Button className="w-full">Book Now</Button>
+            </a>
+          )}
+          {editable && (
+            <CreateTicketOption
+              buttonText="Edit"
+              eventId="1"
+              editMode
+              ticketData={ticket}
+            />
+          )}
+        </div>
         {editable && (
-          <CreateTicketOption
-            buttonText="Edit"
-            eventId="1"
-            editMode
-            ticketData={ticket}
-          />
+          <a href={`/ticket/${ticket.id}/response`}>
+            <Button variant="secondary" className="w-full mt-4">
+              View Response
+            </Button>
+          </a>
         )}
       </CardFooter>
     </Card>
