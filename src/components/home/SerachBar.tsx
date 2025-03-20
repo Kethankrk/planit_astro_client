@@ -48,7 +48,7 @@ export default function SearchBar() {
   };
 
   return (
-    <div className="flex gap-2 relative">
+    <div className="flex gap-2 relative flex-col md:flex-row px-10 md:px-2">
       <Input
         type="text"
         placeholder="Search events..."

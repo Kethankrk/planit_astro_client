@@ -9,7 +9,7 @@ import {
   type TicketResponseSelectType,
 } from "@/db/schema/event";
 import { CustomError } from "@/lib/api";
-import { count, eq, getTableColumns, min } from "drizzle-orm";
+import { count, eq, getTableColumns, isNotNull, min } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 interface IEventService {
@@ -104,6 +104,7 @@ export class EventService implements IEventService {
         ticketResponseTable,
         eq(ticketResponseTable.ticketId, ticketTable.id)
       )
+      .where(isNotNull(ticketTable.id))
       .groupBy(eventTable.id)
       .limit(limit)
       .offset((page - 1) * limit);
