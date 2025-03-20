@@ -1,12 +1,19 @@
 import { db } from "@/db";
 import { userTable } from "@/db/schema/auth";
-import { contributorsCallResponseTable } from "@/db/schema/contributors";
-import { eventTable } from "@/db/schema/event";
+import {
+  contributorsCallResponseTable,
+  contributorsCallTable,
+} from "@/db/schema/contributors";
+import {
+  eventTable,
+  ticketResponseTable,
+  ticketTable,
+} from "@/db/schema/event";
 import { lucia } from "@/lib/auth";
 import { sendEmail } from "@/lib/email";
 import { defineAction } from "astro:actions";
 import { z } from "astro:schema";
-import { eq } from "drizzle-orm";
+import { and, eq, isNotNull } from "drizzle-orm";
 
 export const server = {
   deleteEvent: defineAction({
@@ -95,6 +102,37 @@ export const server = {
         "Planit: Contributor Rejected",
         "Your contribution has been rejected!"
       );
+    },
+  }),
+
+  sendEmailAttendees: defineAction({
+    input: z.object({
+      eventId: z.number(),
+      message: z.string(),
+    }),
+    handler: async (input, context) => {
+      const { eventId, message } = input;
+
+      const users = await db()
+        .select({
+          email: ticketResponseTable.email,
+        })
+        .from(eventTable)
+        .leftJoin(ticketTable, eq(eventTable.id, ticketTable.eventId))
+        .leftJoin(
+          ticketResponseTable,
+          eq(ticketTable.id, ticketResponseTable.ticketId)
+        )
+        .where(
+          and(eq(eventTable.id, eventId), isNotNull(ticketResponseTable.email))
+        );
+
+      let emails = "";
+      users.forEach((user) => {
+        emails += user.email + ", ";
+      });
+
+      await sendEmail(emails, "Planit: Event Notification", message);
     },
   }),
 };

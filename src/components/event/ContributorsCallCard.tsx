@@ -47,7 +47,7 @@ export default function ContributorsCallCard({
       </CardContent>
       {!isPublicList && (
         <CardFooter>
-          <a href={`/contributor-calls/${call.id}`}>
+          <a href={`/contributor-calls/${call.id}`} className="w-full">
             <Button className="w-full" variant="secondary">
               View Response
             </Button>
