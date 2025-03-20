@@ -1,5 +1,6 @@
 import { db } from "@/db";
 import { userTable } from "@/db/schema/auth";
+import { contributorsCallResponseTable } from "@/db/schema/contributors";
 import { eventTable } from "@/db/schema/event";
 import { lucia } from "@/lib/auth";
 import { sendEmail } from "@/lib/email";
@@ -53,6 +54,47 @@ export const server = {
       } catch (error) {
         console.log(error);
       }
+    },
+  }),
+
+  approveContributor: defineAction({
+    input: z.object({
+      id: z.number(),
+      email: z.string(),
+    }),
+    handler: async (input, context) => {
+      const { id, email } = input;
+      console.log("Approving contributor with id: ", id);
+      await db()
+        .update(contributorsCallResponseTable)
+        .set({ approved: true })
+        .where(eq(contributorsCallResponseTable.id, id));
+
+      await sendEmail(
+        email,
+        "Planit: Contributor Approved",
+        "Your contribution has been approved!"
+      );
+    },
+  }),
+
+  rejectContributor: defineAction({
+    input: z.object({
+      id: z.number(),
+      email: z.string(),
+    }),
+    handler: async (input, context) => {
+      const { id, email } = input;
+      await db()
+        .update(contributorsCallResponseTable)
+        .set({ approved: false })
+        .where(eq(contributorsCallResponseTable.id, id));
+
+      await sendEmail(
+        email,
+        "Planit: Contributor Rejected",
+        "Your contribution has been rejected!"
+      );
     },
   }),
 };

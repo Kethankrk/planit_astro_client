@@ -10,10 +10,13 @@ import {
 import { eq } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
-type Contributor = {
-  name: string | null;
-  email: string | null;
-  role: string | null;
+export type Contributor = {
+  name: string;
+  email: string;
+  role: string;
+  bio: string;
+  id: number;
+  isApproved: boolean | null;
 };
 
 interface IContributorService {
@@ -60,12 +63,15 @@ export class ContributorService implements IContributorService {
     return response.id;
   }
 
-  async getAll(eventId: number): Promise<Contributor[]> {
+  async getAll(id: number): Promise<Contributor[]> {
     const contributors = await this.db
       .select({
         name: userTable.username,
         email: userTable.email,
         role: contributorsCallTable.role,
+        bio: contributorsCallResponseTable.bio,
+        id: contributorsCallResponseTable.id,
+        isApproved: contributorsCallResponseTable.approved,
       })
       .from(contributorsCallResponseTable)
       .leftJoin(
@@ -76,9 +82,9 @@ export class ContributorService implements IContributorService {
         userTable,
         eq(userTable.id, contributorsCallResponseTable.userId)
       )
-      .where(eq(contributorsCallTable.eventId, eventId));
+      .where(eq(contributorsCallTable.id, id));
 
-    return contributors;
+    return contributors as Contributor[];
   }
 
   async getCall(eventId: number): Promise<ContributorsCallSelectType[]> {

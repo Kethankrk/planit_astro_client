@@ -71,6 +71,20 @@
       "when": 1740065638155,
       "tag": "0009_tired_otto_octavius",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1742480794304,
+      "tag": "0010_goofy_lionheart",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1742483146928,
+      "tag": "0011_noisy_chimera",
+      "breakpoints": true
     }
   ]
 }

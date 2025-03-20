@@ -1,0 +1,1 @@
+ALTER TABLE "contributors-call-response" ALTER COLUMN "approved" DROP NOT NULL;

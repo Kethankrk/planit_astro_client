@@ -1,0 +1,23 @@
+---
+import Layout from "@/layout/MainLayout.astro";
+import { ContributorService, type Contributor } from "@/services/contributor";
+import { ContributorResponseCard } from "@/components/event/ContributorResponseCard";
+
+const id = Astro.params.id;
+let contributors: Contributor[] = [];
+try {
+  contributors = await ContributorService.getInstance().getAll(Number(id));
+} catch (error) {
+  console.log(error);
+}
+---
+
+<Layout>
+  <div class="grid grid-cols-1 gap-10">
+    {
+      contributors.map((contributor) => (
+        <ContributorResponseCard client:load contributor={contributor} />
+      ))
+    }
+  </div>
+</Layout>

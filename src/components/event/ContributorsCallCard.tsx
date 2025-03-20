@@ -4,11 +4,13 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
+  CardFooter,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { UserPlus, FileText, UserCircle } from "lucide-react";
 import type { ContributorsCallSelectType } from "@/db/schema/contributors";
 import { CallResponseForm } from "@/components/event/CallResponseForm";
+import { Button } from "@/components/ui/button";
 
 interface Props {
   call: ContributorsCallSelectType;
@@ -43,6 +45,15 @@ export default function ContributorsCallCard({
           {isPublicList && <CallResponseForm callId={call.id} />}
         </div>
       </CardContent>
+      {!isPublicList && (
+        <CardFooter>
+          <a href={`/contributor-calls/${call.id}`}>
+            <Button className="w-full" variant="secondary">
+              View Response
+            </Button>
+          </a>
+        </CardFooter>
+      )}
     </Card>
   );
 }

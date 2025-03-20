@@ -1,4 +1,4 @@
-import { integer, pgTable, serial, text } from "drizzle-orm/pg-core";
+import { boolean, integer, pgTable, serial, text } from "drizzle-orm/pg-core";
 import { eventTable } from "./event";
 import { userTable } from "./auth";
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
@@ -21,6 +21,7 @@ export const contributorsCallResponseTable = pgTable(
     userId: text("user_id")
       .notNull()
       .references(() => userTable.id),
+    approved: boolean("approved"),
     callId: integer("call_id")
       .notNull()
       .references(() => contributorsCallTable.id, { onDelete: "cascade" }),
