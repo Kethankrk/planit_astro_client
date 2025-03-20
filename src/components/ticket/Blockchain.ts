@@ -18,7 +18,7 @@ const connectToMetaMask = async (): Promise<ethers.BrowserProvider> => {
 export const mintNFT = async (id: number): Promise<void> => {
   const provider = await connectToMetaMask();
   const signer = await provider.getSigner();
-  const contractAddress = "0x9E95c3E0eEea9DA3b6fB70FD3d3239078f0e9d50";
+  const contractAddress = import.meta.env.PUBLIC_CONTRACT_ADDRESS;
   const NFTContract = new ethers.Contract(
     contractAddress,
     NFTJSON.abi,
