@@ -39,7 +39,7 @@ const type = (Astro.url.searchParams.get("type") || "pdf") as TicketType;
         email={ticketRes.email}
         location={ticketRes.location ?? "Deleted event"}
         id={ticketRes.id.toString()}
-        price={Number(ticketRes.price)}
+        price={ticketRes.price}
         qr={qrCode}
         type={type}
       />

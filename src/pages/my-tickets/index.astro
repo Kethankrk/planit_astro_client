@@ -2,19 +2,73 @@
 import { FinalTicketCard } from "@/components/ticket/FinalTicketCard";
 import QRCode from "qrcode";
 import MainLayout from "@/layout/MainLayout.astro";
+import { db } from "@/db";
+import {
+  eventTable,
+  ticketResponseTable,
+  ticketTable,
+} from "@/db/schema/event";
+import { eq, getTableColumns, type InferSelectModel } from "drizzle-orm";
 
 const qrCode = await QRCode.toDataURL("https://www.google.com");
+
+type Ticket = {
+  title: string;
+  date: string;
+  email: string;
+  location: string;
+  id: number;
+  price: string | null;
+  reponseId: number;
+};
+
+let myTickets: Ticket[] = [];
+let qrs: string[] = [];
+const { user } = Astro.locals;
+
+try {
+  const data = await db()
+    .select({
+      ...getTableColumns(ticketTable),
+      location: eventTable.location,
+      date: eventTable.startAt,
+      title: eventTable.title,
+      reponseId: ticketResponseTable.id,
+    })
+    .from(ticketTable)
+    .leftJoin(
+      ticketResponseTable,
+      eq(ticketTable.id, ticketResponseTable.ticketId)
+    )
+    .leftJoin(eventTable, eq(ticketTable.eventId, eventTable.id))
+    .where(eq(ticketResponseTable.email, user!.email));
+  myTickets = data as unknown as Ticket[];
+
+  for (const ticket of myTickets) {
+    qrs.push(
+      await QRCode.toDataURL(
+        `http://${Astro.url.host}/ticket/verify/${ticket.reponseId}`
+      )
+    );
+  }
+} catch (error) {}
 ---
 
 <MainLayout>
-  <div>My Tickets</div>
-  <FinalTicketCard
-    title="Basic event"
-    date="23/02/2025"
-    email="test@gmail.com"
-    location="Kozhikode"
-    id="2"
-    price={200}
-    qr={qrCode}
-  />
+  <h1 class="text-2xl md:text-4xl font-bold mb-20 text-center">My Tickets</h1>
+  <div>
+    {
+      myTickets.map((ticket, idx) => (
+        <FinalTicketCard
+          title={ticket.title}
+          date={ticket.date.toString()}
+          email={ticket.email}
+          location={ticket.location}
+          id={ticket.id.toString()}
+          price={ticket.price}
+          qr={qrs[idx]}
+        />
+      ))
+    }
+  </div>
 </MainLayout>

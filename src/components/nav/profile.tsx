@@ -29,6 +29,9 @@ export function ProfileDropDown() {
             Profile
             <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
           </DropdownMenuItem>
+          <a href="/my-tickets">
+            <DropdownMenuItem>My Tickets</DropdownMenuItem>
+          </a>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem

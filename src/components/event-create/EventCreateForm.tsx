@@ -20,7 +20,7 @@ export type EventFormValues = z.infer<typeof eventSchema>;
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarIcon, UploadIcon } from "lucide-react";
+import { CalendarIcon, Loader2, UploadIcon } from "lucide-react";
 import { format } from "date-fns";
 
 import { cn, postHelper } from "@/lib/utils";
@@ -51,9 +51,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 export function EventCreateForm() {
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventSchema),
     defaultValues: {
@@ -66,6 +68,7 @@ export function EventCreateForm() {
 
   async function onSubmit(data: EventFormValues) {
     try {
+      setIsLoading(true);
       const formData = new FormData();
       formData.append("title", data.title);
       formData.append("description", data.description);
@@ -90,7 +93,9 @@ export function EventCreateForm() {
           variant: "destructive",
         });
       }
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       toast({
         title: "Something went wrong",
         description: "Please try again later",
@@ -366,9 +371,15 @@ export function EventCreateForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full">
-              Create Event
-            </Button>
+            {isLoading ? (
+              <Button type="button" disabled className="w-full">
+                Create Event <Loader2 className="animate-spin" />
+              </Button>
+            ) : (
+              <Button type="submit" className="w-full">
+                Create Event
+              </Button>
+            )}
           </form>
         </Form>
       </CardContent>

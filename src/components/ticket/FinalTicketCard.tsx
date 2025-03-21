@@ -6,7 +6,7 @@ interface TicketProps {
   date: string;
   location: string;
   id: string;
-  price: number;
+  price: string | null;
   qr: string;
   type?: "nft" | "pdf";
 }
@@ -72,7 +72,7 @@ export const FinalTicketCard = ({
           <div className="text-center mt-4">
             <p className="text-red-600 text-sm font-bold">Price</p>
             <p className="text-xl font-extrabold text-red-700">
-              ${price.toFixed(2)}
+              ${price ? price : "Free"}
             </p>
           </div>
         </div>

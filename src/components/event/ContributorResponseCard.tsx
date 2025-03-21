@@ -7,6 +7,16 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "../ui/card";
 import { actions } from "astro:actions";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { DialogClose } from "@radix-ui/react-dialog";
 
 interface ContributorResponseCardProps {
   contributor: {
@@ -79,14 +89,53 @@ export function ContributorResponseCard({
             </Badge>
           ) : (
             <>
-              <Button variant="outline" size="sm" onClick={handleReject}>
-                <X className="mr-2 h-4 w-4" />
-                Reject
-              </Button>
-              <Button size="sm" onClick={handleApprove}>
-                <Check className="mr-2 h-4 w-4" />
-                Approve
-              </Button>
+              <Dialog>
+                <DialogTrigger>
+                  <Button variant="outline" size="sm">
+                    <X className="mr-2 h-4 w-4" />
+                    Reject
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Are you absolutely sure?</DialogTitle>
+                    <DialogDescription>
+                      This action cannot be undone. This will permanently reject
+                      the request.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button onClick={handleReject}>Confirm</Button>
+                    <DialogClose asChild>
+                      <Button variant="outline">Cancel</Button>
+                    </DialogClose>
+                  </div>
+                </DialogContent>
+              </Dialog>
+
+              <Dialog>
+                <DialogTrigger>
+                  <Button size="sm">
+                    <Check className="mr-2 h-4 w-4" />
+                    Approve
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Are you absolutely sure?</DialogTitle>
+                    <DialogDescription>
+                      This action cannot be undone. This will permanently
+                      approve the request.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button onClick={handleApprove}>Confirm</Button>
+                    <DialogClose asChild>
+                      <Button variant="outline">Cancel</Button>
+                    </DialogClose>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </>
           )}
         </div>
