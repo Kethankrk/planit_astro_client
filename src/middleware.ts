@@ -10,6 +10,8 @@ const authRoutes = [
   "/api/signup",
 ];
 
+const whiteListRoutes = ["/event", "/api"];
+
 export const onRequest = defineMiddleware(async (context, next) => {
   const { action } = getActionContext(context);
   if (authRoutes.includes(context.url.pathname)) {
@@ -24,6 +26,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (!sessionId) {
     context.locals.user = null;
     context.locals.session = null;
+    if (
+      context.url.pathname.startsWith("/event") ||
+      context.url.pathname.startsWith("/api")
+    ) {
+      return next();
+    }
     return context.redirect("/auth/login");
   }
 

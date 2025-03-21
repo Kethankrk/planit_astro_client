@@ -26,7 +26,7 @@ try {
   const eventId = Number(id)
   eventData = await EventService.getInstance().get(eventId);
 
-  if(eventData.userId == Astro.locals.user!.id){
+  if(eventData.userId == Astro.locals.user?.id){
     isOwner = true;
   }
 
@@ -36,7 +36,7 @@ try {
 
   contributorsCall = await ContributorService.getInstance().getCall(eventId)
 
-  const purchasedTickets = await TicketService.getInstance().ticketsFromOneEvent(eventId, Astro.locals.user!.email)
+  const purchasedTickets = await TicketService.getInstance().ticketsFromOneEvent(eventId, Astro.locals.user?.email ?? "")
   purchasedTicketIds = purchasedTickets.map(ticket => ticket.id)
 } catch (error) {
   if (error instanceof CustomError && error.statusCode === 404) {
